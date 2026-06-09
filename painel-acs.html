@@ -125,7 +125,8 @@
       </section>
 
       <section id="families" class="content-section hidden space-y-6">
-        <div class="flex items-center justify-between">
+        
+        <div id="familyListHeader" class="flex items-center justify-between">
           <h2 class="text-2xl font-800 text-white tracking-tight">Famílias Cadastradas</h2>
           <button id="btnToggleForm" onclick="prepareNewFamilyForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-700 text-sm transition-all flex items-center gap-2">
             <i data-lucide="plus" style="width:16px;height:16px;"></i> Nova Família
@@ -133,9 +134,15 @@
         </div>
 
         <div id="familyFormContainer" class="bg-slate-900 rounded-2xl border border-white/10 p-6 hidden">
-          <h3 id="formTitle" class="text-lg font-800 text-white mb-4 flex items-center gap-2">
-            <i data-lucide="file-text" class="text-emerald-400"></i> Ficha de Cadastro Familiar e Territorial
-          </h3>
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+            <h3 id="formTitle" class="text-lg font-800 text-white flex items-center gap-2">
+              <i data-lucide="file-text" class="text-emerald-400"></i> Ficha de Cadastro Familiar e Territorial
+            </h3>
+            <button type="button" onclick="showOnlyList()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 transition-colors">
+              <i data-lucide="arrow-left" style="width:12px;height:12px;"></i> Voltar para a Listagem
+            </button>
+          </div>
+
           <form id="familyForm" onsubmit="saveFamily(event)" class="space-y-6">
             <input type="hidden" id="editProntuarioId" value="">
 
@@ -204,7 +211,7 @@
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
-              <button type="button" onclick="toggleFamilyForm()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-all">Cancelar</button>
+              <button type="button" onclick="showOnlyList()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-all">Cancelar</button>
               <button type="submit" id="btnSubmitForm" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all">Salvar Ficha Familiar</button>
             </div>
           </form>
@@ -261,7 +268,7 @@
 
             <div>
               <label for="visitNotes" class="block text-xs font-600 text-slate-300 mb-1">Notas e Observações Clínicas/Territoriais</label>
-              <textarea id="visitNotes" rows="3" placeholder="Descreva os principais pontos observados (condições da moradia, estado dos pacientes hipertensos/diabéticos, etc.)" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+              <textarea id="visitNotes" rows="3" placeholder="Descreva os principais pontos observados" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
@@ -323,19 +330,31 @@
         }
       });
 
-      // Recarrega dados dependendo da tela de foco
-      if (hash === '#visits') {
+      // NOVO COMPORTAMENTO: Se clicar na aba famílias pura pelo menu, exibe apenas a listagem limpa
+      if (hash === '#families') {
+        showOnlyList();
+      } else if (hash === '#visits') {
         carregarPainelVisitas();
       }
+    }
+
+    // CONTROLADORES DE EXCLUSIVIDADE DE TELA (LISTA vs CADASTRO)
+    function showOnlyList() {
+      document.getElementById('familyFormContainer').classList.add('hidden');
+      document.getElementById('familyListHeader').classList.remove('hidden');
+      document.getElementById('listaFamiliasContainer').classList.remove('hidden');
+      carregarFamilias();
+    }
+
+    function showOnlyForm() {
+      document.getElementById('familyListHeader').classList.add('hidden');
+      document.getElementById('listaFamiliasContainer').classList.add('hidden');
+      document.getElementById('familyFormContainer').classList.remove('hidden');
     }
 
     function openFamilyRegistration() {
       window.location.hash = '#families';
       prepareNewFamilyForm();
-    }
-
-    function toggleFamilyForm() {
-      document.getElementById('familyFormContainer').classList.toggle('hidden');
     }
 
     function prepareNewFamilyForm() {
@@ -346,7 +365,7 @@
       document.getElementById("cepStatus").innerText = "Buscar automático";
       document.getElementById("cepStatus").className = "text-[10px] font-700 text-slate-500 italic";
       
-      document.getElementById('familyFormContainer').classList.remove('hidden');
+      showOnlyForm(); // Força sumir a lista e aparecer só o form
       atualizarPreviaProntuario();
       resetMembrosForm();
       lucide.createIcons();
@@ -394,7 +413,6 @@
               document.getElementById("cidade").value = data.localidade || "";
               document.getElementById("uf").value = data.uf ? data.uf.toUpperCase() : "";
               document.getElementById("complemento").value = "";
-              
               statusLabel.innerText = "Encontrado!";
               statusLabel.className = "text-[10px] font-700 text-emerald-400";
               document.getElementById("numCasa").focus();
@@ -560,7 +578,7 @@
       
       familia.membros.forEach(membro => addMemberRow(membro));
 
-      document.getElementById('familyFormContainer').classList.remove('hidden');
+      showOnlyForm(); // Oculta a listagem para focar na edição
       document.getElementById('familyFormContainer').scrollIntoView({ behavior: 'smooth' });
       lucide.createIcons();
     }
@@ -676,9 +694,7 @@
       }
 
       localStorage.setItem('familias', JSON.stringify(familiasGerais));
-      prepareNewFamilyForm();
-      toggleFamilyForm();
-      carregarFamilias();
+      showOnlyList(); // Após salvar, volta direto para a listagem limpa
     }
 
     /* ==========================================================================
@@ -702,7 +718,6 @@
 
       container.innerHTML = '';
       minhasFamilias.forEach(fam => {
-        // Encontra as visitas feitas para este prontuário específico
         const visitasDaFamilia = visitasGerais.filter(v => v.prontuario === fam.prontuario);
         
         let statusBadge = '';
@@ -741,7 +756,7 @@
                 <span class="text-xs bg-slate-800 text-slate-400 font-700 px-2 py-0.5 rounded-lg border border-white/5">Nº ${fam.prontuario}</span>
                 ${statusBadge}
               </div>
-              <p class="text-xs text-slate-400">${fam.logradouro}, Nº ${fam.numCasa} ${fam.complemento ? `(${fam.complemento})` : ''} — Bairro: ${fam.bairro}</p>
+              <p class="text-xs text-slate-400">${fam.logradouro}, Nº ${fam.numCasa} — Bairro: ${fam.bairro}</p>
               ${historicoListaHtml}
             </div>
             
@@ -761,7 +776,6 @@
       document.getElementById('visitProntuarioTarget').value = prontuario;
       document.getElementById('visitFormTitle').innerHTML = `<i data-lucide="file-plus" class="text-emerald-400"></i> Lançar Relatório de Visita — Casa de ${responsavel}`;
       
-      // Coloca por padrão a data de hoje no input date
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById('visitDate').value = hoje;
       document.getElementById('visitReason').value = "";
@@ -789,22 +803,15 @@
       const visitasGerais = JSON.parse(localStorage.getItem('visitas_historico')) || [];
       
       visitasGerais.push({
-        agenteLogin: sessaoAtiva.login,
-        prontuario,
-        data,
-        motivo,
-        desfecho,
-        notas
+        agenteLogin: sessaoAtiva.login, prontuario, data, motivo, desfecho, notas
       });
 
       localStorage.setItem('visitas_historico', JSON.stringify(visitasGerais));
 
-      // Sincroniza e incrementa contagem de visitas nas estatísticas do Agente
       sessaoAtiva.visitas = (parseInt(sessaoAtiva.visitas) || 0) + 1;
       localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas;
 
-      // Sincroniza na tabela geral de Agentes
       const agentesGerais = JSON.parse(localStorage.getItem('agentes')) || [];
       const idx = agentesGerais.findIndex(a => a.login === sessaoAtiva.login);
       if(idx !== -1) {
@@ -812,7 +819,7 @@
         localStorage.setItem('agentes', JSON.stringify(agentesGerais));
       }
 
-      alert('Relatório de Visita Domiciliar salvo com sucesso e computado no sistema!');
+      alert('Relatório de Visita Domiciliar salvo com sucesso!');
       closeVisitForm();
       carregarPainelVisitas();
     }
@@ -823,7 +830,6 @@
       sessaoAtiva = JSON.parse(localStorage.getItem('agente_sessao'));
 
       if(!sessaoAtiva) {
-        alert('Nenhum agente logado.');
         window.location.href = 'index.html';
         return;
       }
@@ -836,9 +842,7 @@
       document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
 
-      prepareNewFamilyForm();
-      document.getElementById('familyFormContainer').classList.add('hidden'); // garante oculto no load
-      carregarFamilias();
+      showOnlyList(); // Garante inicialização limpa apenas na listagem
       updateNavigation();
     });
   </script>
