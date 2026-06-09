@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACS Conecta - Painel Gerencial</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+</head>
+<body class="h-full bg-slate-950 text-slate-100 flex flex-col md:flex-row overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-slate-900 border-r border-white/10 p-6 hidden md:flex flex-col flex-shrink-0">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+        <i data-lucide="shield-check" class="text-white" style="width:20px;height:20px;"></i>
+      </div>
+      <div>
+        <span class="font-800 text-base block leading-none">ACS Conecta</span>
+        <span class="text-[10px] text-emerald-400 font-700 tracking-wider uppercase">Gerencial</span>
+      </div>
+    </div>
+    <nav class="space-y-2 flex-1">
+      <a href="#" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-slate-800 text-white font-600">
+        <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i> Estatísticas
+      </a>
+      <a href="cadastro.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <i data-lucide="user-plus" style="width:18px;height:18px;"></i> Cadastrar Agente
+      </a>
+    </nav>
+    <div class="border-t border-white/10 pt-4">
+      <a href="index.html" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition-colors font-600 text-sm justify-center">
+        <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sair do Painel
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto p-4 md:p-8 max-w-6xl mx-auto space-y-6 w-full">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/5 p-6 rounded-2xl border border-white/10">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-800 text-white tracking-tight">Painel de Controle</h1>
+        <p class="text-slate-400 text-sm mt-1">Estatísticas em tempo real baseadas no localStorage.</p>
+      </div>
+      <a href="cadastro.html" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
+        <i data-lucide="user-plus" style="width:18px;height:18px;"></i> Cadastrar Novo Agente
+      </a>
+    </div>
+
+    <!-- Cards Dinâmicos -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
+        <p class="text-3xl font-800 text-white" id="totalFamilias">0</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Famílias Cadastradas</p>
+      </div>
+      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
+        <p class="text-3xl font-800 text-white" id="totalVisitas">0</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Realizadas</p>
+      </div>
+      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
+        <p class="text-3xl font-800 text-white" id="totalAgentes">0</p>
+        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Agentes Ativos</p>
+      </div>
+    </div>
+
+    <!-- Tabela Gerada Automaticamente -->
+    <div class="bg-slate-900 rounded-2xl border border-white/10 p-5">
+      <h2 class="font-800 text-lg text-white mb-4">Lista de Profissionais Cadastrados</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="text-xs uppercase text-slate-400 border-b border-white/10">
+            <tr>
+              <th class="pb-3 font-700">Nome do Profissional</th>
+              <th class="pb-3 font-700">Unidade</th>
+              <th class="pb-3 font-700 text-center">Famílias</th>
+              <th class="pb-3 font-700 text-center">Visitas</th>
+            </tr>
+          </thead>
+          <tbody id="listaAgentes" class="divide-y divide-white/5">
+            <!-- Inserido via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.addEventListener('load', () => {
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      
+      let qtdFamilias = 0;
+      let qtdVisitas = 0;
+      const tabela = document.getElementById('listaAgentes');
+
+      if(agentes.length === 0) {
+        tabela.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500">Nenhum agente cadastrado no LocalStorage.</td></tr>`;
+      } else {
+        tabela.innerHTML = '';
+        agentes.forEach(agente => {
+          qtdFamilias += agente.familias || 0;
+          qtdVisitas += agente.visitas || 0;
+
+          tabela.innerHTML += `
+            <tr>
+              <td class="py-3 font-600 text-white">${agente.name}</td>
+              <td class="py-3 text-slate-400">${agente.unit}</td>
+              <td class="py-3 text-center">${agente.familias}</td>
+              <td class="py-3 text-center text-emerald-400 font-600">${agente.visitas}</td>
+            </tr>
+          `;
+        });
+      }
+
+      document.getElementById('totalFamilias').innerText = qtdFamilias;
+      document.getElementById('totalVisitas').innerText = qtdVisitas;
+      document.getElementById('totalAgentes').innerText = agentes.length;
+      
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACS Conecta - Painel do Agente</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
+    
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #10b981;
+    }
+    .toggle-checkbox:checked + .toggle-label .toggle-dot {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-950 text-slate-100 flex flex-col md:flex-row overflow-hidden">
+
+  <aside class="w-64 bg-slate-900 border-r border-white/10 p-6 hidden md:flex flex-col flex-shrink-0">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+        <i data-lucide="heart-pulse" class="text-white"></i>
+      </div>
+      <div>
+        <span class="font-800 text-base block leading-none">ACS Conecta</span>
+        <span class="text-[10px] text-emerald-400 font-700 tracking-wider uppercase" id="nomeUnidadeSide">Carregando...</span>
+      </div>
+    </div>
+    
+    <nav class="space-y-2 flex-1">
+      <a href="#home" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Início
+      </a>
+      <a href="#families" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="users" style="width:18px;height:18px;"></i> Famílias
+      </a>
+      <a href="#appointments" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="calendar" style="width:18px;height:18px;"></i> Consultas
+      </a>
+      <a href="#visits" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="home" style="width:18px;height:18px;"></i> Visitas
+      </a>
+    </nav>
+
+    <div class="border-t border-white/10 pt-4">
+      <p class="text-xs text-slate-400 font-600 mb-2" id="nomeAcsSide">Nome do Agente</p>
+      <button onclick="localStorage.removeItem('agente_sessao'); window.location.href='index.html'" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition-colors font-600 text-sm justify-center">
+        <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sair
+      </button>
+    </div>
+  </aside>
+
+  <header class="md:hidden bg-slate-900 border-b border-white/10 p-4 flex items-center justify-between shadow-lg">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+        <i data-lucide="heart-pulse" class="text-white" style="width:16px;height:16px;"></i>
+      </div>
+      <span class="font-800 text-sm">ACS Conecta</span>
+    </div>
+    <button onclick="localStorage.removeItem('agente_sessao'); window.location.href='index.html'" class="text-slate-400 hover:text-red-400">
+      <i data-lucide="log-out" style="width:18px;height:18px;"></i>
+    </button>
+  </header>
+
+  <main class="flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-8">
+    <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+      
+      <section id="home" class="content-section space-y-6">
+        <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+          <h2 class="text-2xl md:text-3xl font-800 text-white tracking-tight" id="boasVindas">Bem-vindo(a)!</h2>
+          <p class="text-slate-400 text-sm mt-1" id="infoUnidade">Carregando unidade...</p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm">
+            <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center mb-3">
+              <i data-lucide="users" class="text-blue-400"></i>
+            </div>
+            <p class="text-3xl font-800 text-white" id="acsFamilias">0</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Minhas Famílias</p>
+          </div>
+          
+          <div class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm">
+            <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center mb-3">
+              <i data-lucide="calendar" class="text-amber-400"></i>
+            </div>
+            <p class="text-3xl font-800 text-white" id="acsConsultas">0</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Consultas</p>
+          </div>
+          
+          <div class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm">
+            <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-3">
+              <i data-lucide="home" class="text-emerald-400"></i>
+            </div>
+            <p class="text-3xl font-800 text-white" id="acsVisitas">0</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Realizadas</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 rounded-2xl p-6 border border-white/10">
+          <h3 class="font-800 text-lg text-white mb-4">Ações rápidas</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button onclick="openFamilyRegistration()" class="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-left group w-full">
+              <div class="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20">
+                <i data-lucide="user-plus" class="text-blue-400 w-4 h-4"></i>
+              </div>
+              <span class="text-sm font-600 text-slate-200">Cadastrar nova família</span>
+            </button>
+            
+            <a href="#visits" class="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-left group">
+              <div class="w-8 h-8 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20">
+                <i data-lucide="clipboard-list" class="text-emerald-400 w-4 h-4"></i>
+              </div>
+              <span class="text-sm font-600 text-slate-200">Lançar relatórios de visitas</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="families" class="content-section hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-2xl font-800 text-white tracking-tight">Famílias Cadastradas</h2>
+          <button id="btnToggleForm" onclick="prepareNewFamilyForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-700 text-sm transition-all flex items-center gap-2">
+            <i data-lucide="plus" style="width:16px;height:16px;"></i> Nova Família
+          </button>
+        </div>
+
+        <div id="familyFormContainer" class="bg-slate-900 rounded-2xl border border-white/10 p-6 hidden">
+          <h3 id="formTitle" class="text-lg font-800 text-white mb-4 flex items-center gap-2">
+            <i data-lucide="file-text" class="text-emerald-400"></i> Ficha de Cadastro Familiar e Territorial
+          </h3>
+          <form id="familyForm" onsubmit="saveFamily(event)" class="space-y-6">
+            <input type="hidden" id="editProntuarioId" value="">
+
+            <div class="bg-white/5 p-4 rounded-xl border border-white/5 space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <h4 class="text-xs font-800 text-emerald-400 uppercase tracking-wider">1. Localização e Identificação Territorial</h4>
+                <div class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-lg text-xs font-700 flex items-center gap-1.5 self-start sm:self-auto">
+                  <i data-lucide="fingerprint" class="w-3.5 h-3.5"></i>
+                  Prontuário: <span id="lblProntuarioAuto">--.---</span>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-9">
+                  <label for="responsavel" class="block text-xs font-600 text-slate-300 mb-1">Nome do Responsável da Casa *</label>
+                  <input type="text" id="responsavel" placeholder="Nome completo do chefe da família" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all" required>
+                </div>
+                <div class="sm:col-span-3">
+                  <label for="cep" class="block text-xs font-600 text-slate-300 mb-1 flex items-center justify-between">
+                    <span>CEP</span>
+                    <span id="cepStatus" class="text-[10px] font-700 text-slate-500 italic">Buscar automático</span>
+                  </label>
+                  <input type="text" id="cep" placeholder="00000-000" maxlength="9" oninput="buscarCep(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-700 tracking-wide text-center transition-all">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-6">
+                  <label for="logradouro" class="block text-xs font-600 text-slate-300 mb-1">Logradouro (Rua, Av, Beco) *</label>
+                  <input type="text" id="logradouro" placeholder="Nome da rua" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all" required>
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="numCasa" class="block text-xs font-600 text-slate-300 mb-1">Número *</label>
+                  <input type="text" id="numCasa" placeholder="Ex: 145" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all" required>
+                </div>
+                <div class="sm:col-span-4">
+                  <label for="complemento" class="block text-xs font-600 text-slate-300 mb-1">Complemento</label>
+                  <input type="text" id="complemento" placeholder="Apt, Bloco, Fundos, Proximo a..." class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                <div class="sm:col-span-5">
+                  <label for="bairro" class="block text-xs font-600 text-slate-300 mb-1">Bairro *</label>
+                  <input type="text" id="bairro" placeholder="Ex: Centro" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all" required>
+                </div>
+                <div class="sm:col-span-5">
+                  <label for="cidade" class="block text-xs font-600 text-slate-300 mb-1">Cidade / Distrito *</label>
+                  <input type="text" id="cidade" placeholder="Nome da localidade" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all" required>
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="uf" class="block text-xs font-600 text-slate-300 mb-1 text-center">UF *</label>
+                  <input type="text" id="uf" placeholder="EX" maxlength="2" class="w-full px-2 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm uppercase text-center font-700 transition-all" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-800 text-emerald-400 uppercase tracking-wider">2. Componentes / Membros da Família</h4>
+                <button type="button" onclick="addMemberRow()" class="bg-white/5 hover:bg-white/10 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-700 transition-colors flex items-center gap-1.5">
+                  <i data-lucide="user-plus" style="width:14px;height:14px;"></i> Adicionar Membro
+                </button>
+              </div>
+              <div id="membrosContainer" class="space-y-4"></div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
+              <button type="button" onclick="toggleFamilyForm()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-all">Cancelar</button>
+              <button type="submit" id="btnSubmitForm" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all">Salvar Ficha Familiar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="space-y-3" id="listaFamiliasContainer"></div>
+      </section>
+
+      <section id="appointments" class="content-section hidden space-y-4">
+        <h2 class="text-2xl font-800 text-white tracking-tight">Consultas</h2>
+        <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
+          Nenhuma consulta agendada para hoje.
+        </div>
+      </section>
+
+      <section id="visits" class="content-section hidden space-y-6">
+        <div>
+          <h2 class="text-2xl font-800 text-white tracking-tight">Controle de Visitas Domiciliares</h2>
+          <p class="text-slate-400 text-sm mt-1">Gerencie relatórios e realize o mapeamento das visitas territoriais da sua microárea.</p>
+        </div>
+
+        <div id="visitFormContainer" class="bg-slate-900 rounded-2xl border border-white/10 p-6 hidden space-y-4">
+          <h3 id="visitFormTitle" class="text-lg font-800 text-white flex items-center gap-2">
+            <i data-lucide="clipboard-list" class="text-emerald-400"></i> Registrar Relatório de Visita Domiciliar
+          </h3>
+          <form id="visitForm" onsubmit="saveVisitReport(event)" class="space-y-4">
+            <input type="hidden" id="visitProntuarioTarget" value="">
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label for="visitDate" class="block text-xs font-600 text-slate-300 mb-1">Data da Visita *</label>
+                <input type="date" id="visitDate" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+              </div>
+              <div>
+                <label for="visitReason" class="block text-xs font-600 text-slate-300 mb-1">Motivo Principal *</label>
+                <select id="visitReason" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                  <option value="">Selecione o Motivo</option>
+                  <option value="Cadastramento / Atualização">Cadastramento / Atualização</option>
+                  <option value="Acompanhamento de Rotina">Acompanhamento de Rotina</option>
+                  <option value="Busca Ativa (Vacina/Consultas)">Busca Ativa (Vacina/Consultas)</option>
+                  <option value="Egresso de Internação">Egresso de Internação</option>
+                  <option value="Acompanhamento Gestacional / Puerpério">Acompanhamento Gestacional / Puerpério</option>
+                </select>
+              </div>
+              <div>
+                <label for="visitOutcome" class="block text-xs font-600 text-slate-300 mb-1">Desfecho / Status *</label>
+                <select id="visitOutcome" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                  <option value="Realizada">Visita Realizada com Sucesso</option>
+                  <option value="Recusada">Visita Recusada pelo Morador</option>
+                  <option value="Ausente">Morador Ausente / Casa Fechada</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="visitNotes" class="block text-xs font-600 text-slate-300 mb-1">Notas e Observações Clínicas/Territoriais</label>
+              <textarea id="visitNotes" rows="3" placeholder="Descreva os principais pontos observados (condições da moradia, estado dos pacientes hipertensos/diabéticos, etc.)" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" onclick="closeVisitForm()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-600 text-xs transition-colors">Cancelar</button>
+              <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-700 text-xs transition-colors">Finalizar Relatório</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="space-y-3" id="listaVisitasFamilias"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 px-6 py-3 flex justify-between items-center z-50">
+    <a href="#home" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Início</span>
+    </a>
+    <a href="#families" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="users" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Famílias</span>
+    </a>
+    <a href="#appointments" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="calendar" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Agenda</span>
+    </a>
+    <a href="#visits" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="home" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Visitas</span>
+    </a>
+  </nav>
+
+  <script>
+    let sessaoAtiva = null;
+    let mContador = 0;
+
+    function updateNavigation() {
+      const hash = window.location.hash || '#home';
+      
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.add('hidden');
+      });
+
+      const activeSection = document.querySelector(hash);
+      if (activeSection) activeSection.classList.remove('hidden');
+
+      const allBtns = document.querySelectorAll('.nav-btn, .mobile-nav-btn');
+      allBtns.forEach(btn => {
+        const isActive = btn.getAttribute('href') === hash;
+        if (btn.classList.contains('nav-btn')) {
+          btn.classList.toggle('bg-slate-800', isActive);
+          btn.classList.toggle('text-white', isActive);
+          btn.classList.toggle('text-slate-400', !isActive);
+        } else {
+          btn.classList.toggle('text-emerald-400', isActive);
+          btn.classList.toggle('text-slate-400', !isActive);
+        }
+      });
+
+      // Recarrega dados dependendo da tela de foco
+      if (hash === '#visits') {
+        carregarPainelVisitas();
+      }
+    }
+
+    function openFamilyRegistration() {
+      window.location.hash = '#families';
+      prepareNewFamilyForm();
+    }
+
+    function toggleFamilyForm() {
+      document.getElementById('familyFormContainer').classList.toggle('hidden');
+    }
+
+    function prepareNewFamilyForm() {
+      document.getElementById('familyForm').reset();
+      document.getElementById('editProntuarioId').value = "";
+      document.getElementById('formTitle').innerHTML = `<i data-lucide="file-text" class="text-emerald-400"></i> Ficha de Cadastro Familiar e Territorial`;
+      document.getElementById('btnSubmitForm').innerText = "Salvar Ficha Familiar";
+      document.getElementById("cepStatus").innerText = "Buscar automático";
+      document.getElementById("cepStatus").className = "text-[10px] font-700 text-slate-500 italic";
+      
+      document.getElementById('familyFormContainer').classList.remove('hidden');
+      atualizarPreviaProntuario();
+      resetMembrosForm();
+      lucide.createIcons();
+    }
+
+    function calcularProximoProntuario() {
+      let areaLimpa = "00";
+      if (sessaoAtiva && sessaoAtiva.area) {
+        let numArea = sessaoAtiva.area.replace(/\D/g, '');
+        areaLimpa = numArea ? numArea.padStart(2, '0') : "00";
+      }
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const familiasDaArea = familiasGerais.filter(f => {
+        const prefixo = f.prontuario ? f.prontuario.split('.')[0] : '';
+        return prefixo === areaLimpa;
+      });
+      return `${areaLimpa}.${String(familiasDaArea.length + 1).padStart(3, '0')}`;
+    }
+
+    function atualizarPreviaProntuario() {
+      const isEditing = document.getElementById('editProntuarioId').value;
+      if (!isEditing) {
+        document.getElementById('lblProntuarioAuto').innerText = calcularProximoProntuario();
+      }
+    }
+
+    function buscarCep(input) {
+      let v = input.value.replace(/\D/g, "");
+      if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5, 8);
+      input.value = v;
+
+      const cepLimpo = v.replace("-", "");
+      const statusLabel = document.getElementById("cepStatus");
+
+      if (cepLimpo.length === 8) {
+        statusLabel.innerText = "Buscando...";
+        statusLabel.className = "text-[10px] font-700 text-amber-400 animate-pulse";
+
+        fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            if (!data.erro) {
+              document.getElementById("logradouro").value = data.logradouro || "";
+              document.getElementById("bairro").value = data.bairro || "";
+              document.getElementById("cidade").value = data.localidade || "";
+              document.getElementById("uf").value = data.uf ? data.uf.toUpperCase() : "";
+              document.getElementById("complemento").value = "";
+              
+              statusLabel.innerText = "Encontrado!";
+              statusLabel.className = "text-[10px] font-700 text-emerald-400";
+              document.getElementById("numCasa").focus();
+            } else {
+              statusLabel.innerText = "Não encontrado";
+              statusLabel.className = "text-[10px] font-700 text-red-400";
+            }
+          })
+          .catch(() => {
+            statusLabel.innerText = "Erro na busca";
+            statusLabel.className = "text-[10px] font-700 text-red-400";
+          });
+      }
+    }
+
+    function addMemberRow(data = null) {
+      mContador++;
+      const container = document.getElementById('membrosContainer');
+      const card = document.createElement('div');
+      card.className = "bg-white/5 p-4 rounded-xl border border-white/10 relative space-y-4 membro-item";
+      card.id = `membro_row_${mContador}`;
+      
+      card.innerHTML = `
+        <div class="flex justify-between items-center pb-2 border-b border-white/5">
+          <span class="text-xs font-700 text-slate-400">Membro da Família</span>
+          <button type="button" onclick="removeMemberRow('${card.id}')" class="text-red-400 hover:text-red-300 text-xs font-600 flex items-center gap-1">
+            <i data-lucide="trash-2" style="width:12px;height:12px;"></i> Remover
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">Nome Completo *</label>
+            <input type="text" class="m-nome w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs" required>
+          </div>
+          <div>
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">Data de Nascimento *</label>
+            <input type="date" class="m-nascimento w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs" required>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div>
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">CPF *</label>
+            <input type="text" oninput="this.value=this.value.replace(/\\D/g,'')" maxlength="11" class="m-cpf w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs" required>
+          </div>
+          <div>
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">Nº Cartão SUS *</label>
+            <input type="text" oninput="this.value=this.value.replace(/\\D/g,'')" maxlength="15" class="m-sus w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs" required>
+          </div>
+          <div>
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">Sexo *</label>
+            <select class="m-sexo w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs" required>
+              <option value="">Selecione</option>
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+              <option value="O">Outro</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-600 text-slate-400 mb-1">Telefone Contato</label>
+            <input type="tel" placeholder="(XX) XXXXX-XXXX" oninput="maskPhoneInput(this)" class="m-telefone w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-lg text-white text-xs">
+          </div>
+        </div>
+        <div class="bg-slate-950/40 p-3 rounded-xl border border-white/5 space-y-2">
+          <p class="text-[10px] font-800 text-emerald-400 uppercase tracking-wider mb-2">Condições de Mapeamento Clínico</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Hipertenso</span>
+              <div class="relative inline-block w-8 mr-2 select-none">
+                <input type="checkbox" id="hip_${mContador}" class="m-hipertenso toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
+                <label for="hip_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
+                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
+                </label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Diabético</span>
+              <div class="relative inline-block w-8 mr-2 select-none">
+                <input type="checkbox" id="diab_${mContador}" class="m-diabetico toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
+                <label for="diab_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
+                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
+                </label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Gestante</span>
+              <div class="relative inline-block w-8 mr-2 select-none">
+                <input type="checkbox" id="gest_${mContador}" class="m-gestante toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
+                <label for="gest_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
+                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
+                </label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Vacina Atrasada</span>
+              <div class="relative inline-block w-8 mr-2 select-none">
+                <input type="checkbox" id="vac_${mContador}" class="m-vacina toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
+                <label for="vac_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
+                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+      if (data) {
+        card.querySelector('.m-nome').value = data.nome || '';
+        card.querySelector('.m-nascimento').value = data.nascimento || '';
+        card.querySelector('.m-cpf').value = data.cpf || '';
+        card.querySelector('.m-sus').value = data.sus || '';
+        card.querySelector('.m-sexo').value = data.sexo || '';
+        card.querySelector('.m-telefone').value = data.telefone || '';
+        card.querySelector('.m-hipertenso').checked = !!data.hipertenso;
+        card.querySelector('.m-diabetico').checked = !!data.diabetico;
+        card.querySelector('.m-gestante').checked = !!data.gestante;
+        card.querySelector('.m-vacina').checked = !!data.vacinaAtrasada;
+      }
+      lucide.createIcons();
+    }
+
+    function removeMemberRow(id) {
+      const row = document.getElementById(id);
+      if(row) row.remove();
+    }
+
+    function resetMembrosForm() {
+      document.getElementById('membrosContainer').innerHTML = '';
+      addMemberRow();
+    }
+
+    function maskPhoneInput(input) {
+      let v = input.value.replace(/\D/g, "");
+      if (v.length > 11) v = v.slice(0, 11);
+      if (v.length > 6) v = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+      else if (v.length > 2) v = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+      else if (v.length > 0) v = `(${v}`;
+      input.value = v;
+    }
+
+    function editarFamilia(prontuarioAlvo) {
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const familia = familiasGerais.find(f => f.prontuario === prontuarioAlvo);
+
+      if (!familia) return;
+
+      document.getElementById('editProntuarioId').value = familia.prontuario;
+      document.getElementById('lblProntuarioAuto').innerText = familia.prontuario;
+      document.getElementById('formTitle').innerHTML = `<i data-lucide="edit" class="text-amber-400"></i> Editando Cadastro Familiar — Prontuário Nº ${familia.prontuario}`;
+      document.getElementById('btnSubmitForm').innerText = "Atualizar Ficha Familiar";
+
+      document.getElementById('responsavel').value = familia.responsavel;
+      document.getElementById('cep').value = familia.cep || '';
+      document.getElementById('logradouro').value = familia.logradouro;
+      document.getElementById('numCasa').value = familia.numCasa;
+      document.getElementById('complemento').value = familia.complemento || '';
+      document.getElementById('bairro').value = familia.bairro;
+      document.getElementById('cidade').value = familia.cidade;
+      document.getElementById('uf').value = familia.uf;
+
+      const containerMembros = document.getElementById('membrosContainer');
+      containerMembros.innerHTML = '';
+      
+      familia.membros.forEach(membro => addMemberRow(membro));
+
+      document.getElementById('familyFormContainer').classList.remove('hidden');
+      document.getElementById('familyFormContainer').scrollIntoView({ behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    function carregarFamilias() {
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const minhasFamilias = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login);
+      
+      const container = document.getElementById('listaFamiliasContainer');
+      document.getElementById('acsFamilias').innerText = minhasFamilias.length;
+
+      if(minhasFamilias.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900 rounded-xl p-6 border border-white/10 flex justify-between items-center">
+            <div>
+              <p class="font-600 text-white">Nenhuma família vinculada</p>
+              <p class="text-xs text-slate-400 italic mt-0.5">Clique em "Nova Família" acima para iniciar os registros.</p>
+            </div>
+            <i data-lucide="users" class="text-slate-600"></i>
+          </div>
+        `;
+      } else {
+        container.innerHTML = '';
+        minhasFamilias.forEach(fam => {
+          container.innerHTML += `
+            <div class="bg-slate-900 rounded-xl p-5 border border-white/10 space-y-3 hover:border-emerald-500/20 transition-all">
+              <div class="flex justify-between items-start border-b border-white/5 pb-2">
+                <div>
+                  <h3 class="font-800 text-white text-base flex items-center gap-2">
+                    ${fam.responsavel} 
+                    <span class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg font-700 tracking-wide">Nº ${fam.prontuario}</span>
+                  </h3>
+                  <p class="text-xs text-slate-400 mt-1 flex items-center gap-1 flex-wrap">
+                    <i data-lucide="map-pin" style="width:13px;height:13px;" class="text-emerald-400"></i> 
+                    ${fam.logradouro}, Nº ${fam.numCasa} ${fam.complemento ? `(${fam.complemento})` : ''} — Bairro: ${fam.bairro} — ${fam.cidade} / ${fam.uf}
+                  </p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button onclick="editarFamilia('${fam.prontuario}')" class="bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-700 transition-all flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="edit" style="width:13px;height:13px;"></i> Editar Ficha
+                  </button>
+                  <span class="text-xs font-700 bg-slate-800 border border-white/10 text-slate-300 px-2.5 py-1.5 rounded-lg">
+                    ${fam.membros.length} ${fam.membros.length === 1 ? 'Morador' : 'Moradores'}
+                  </span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                ${fam.membros.map(m => {
+                  let badgesSaude = '';
+                  if(m.hipertenso) badgesSaude += `<span class="bg-red-500/10 text-red-400 border border-red-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Hipertensão</span> `;
+                  if(m.diabetico) badgesSaude += `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Diabetes</span> `;
+                  if(m.gestante) badgesSaude += `<span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Gestante</span> `;
+                  if(m.vacinaAtrasada) badgesSaude += `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Vacina de risco</span>`;
+                  return `
+                    <div class="bg-white/[0.02] border border-white/5 p-3 rounded-lg text-xs flex flex-col justify-between space-y-2">
+                      <div>
+                        <p class="font-700 text-slate-200">${m.nome}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5">SUS: ${m.sus} | CPF: ${m.cpf}</p>
+                      </div>
+                      ${badgesSaude ? `<div class="flex flex-wrap gap-1 pt-1 border-t border-white/5">${badgesSaude}</div>` : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        });
+      }
+      lucide.createIcons();
+    }
+
+    function saveFamily(event) {
+      event.preventDefault();
+      const editProntuarioId = document.getElementById('editProntuarioId').value;
+      const responsavel = document.getElementById('responsavel').value;
+      const cep = document.getElementById('cep').value;
+      const logradouro = document.getElementById('logradouro').value;
+      const numCasa = document.getElementById('numCasa').value;
+      const complemento = document.getElementById('complemento').value;
+      const bairro = document.getElementById('bairro').value;
+      const cidade = document.getElementById('cidade').value;
+      const uf = document.getElementById('uf').value;
+
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const membrosColetados = [];
+      const itensMembros = document.querySelectorAll('.membro-item');
+
+      for (let item of itensMembros) {
+        membrosColetados.push({
+          nome: item.querySelector('.m-nome').value,
+          nascimento: item.querySelector('.m-nascimento').value,
+          cpf: item.querySelector('.m-cpf').value,
+          sus: item.querySelector('.m-sus').value,
+          sexo: item.querySelector('.m-sexo').value,
+          telefone: item.querySelector('.m-telefone').value,
+          hipertenso: item.querySelector('.m-hipertenso').checked,
+          diabetico: item.querySelector('.m-diabetico').checked,
+          gestante: item.querySelector('.m-gestante').checked,
+          vacinaAtrasada: item.querySelector('.m-vacina').checked
+        });
+      }
+
+      if (editProntuarioId) {
+        const index = familiasGerais.findIndex(f => f.prontuario === editProntuarioId);
+        if (index !== -1) {
+          familiasGerais[index] = { ...familiasGerais[index], responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados };
+          alert('Ficha territorial atualizada com sucesso!');
+        }
+      } else {
+        const prontuarioGerado = calcularProximoProntuario();
+        familiasGerais.push({ agenteLogin: sessaoAtiva.login, prontuario: prontuarioGerado, responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados });
+        alert(`Ficha territorial cadastrada!\nProntuário: ${prontuarioGerado}`);
+      }
+
+      localStorage.setItem('familias', JSON.stringify(familiasGerais));
+      prepareNewFamilyForm();
+      toggleFamilyForm();
+      carregarFamilias();
+    }
+
+    /* ==========================================================================
+       LÓGICA DO MÓDULO DE VISITAS DOMICILIARES
+       ========================================================================== */
+    function carregarPainelVisitas() {
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const minhasFamilias = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login);
+      const visitasGerais = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      
+      const container = document.getElementById('listaVisitasFamilias');
+      
+      if(minhasFamilias.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
+            Cadastre famílias na aba anterior para habilitar os relatórios de visita domiciliar.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      minhasFamilias.forEach(fam => {
+        // Encontra as visitas feitas para este prontuário específico
+        const visitasDaFamilia = visitasGerais.filter(v => v.prontuario === fam.prontuario);
+        
+        let statusBadge = '';
+        let historicoListaHtml = '';
+
+        if(visitasDaFamilia.length === 0) {
+          statusBadge = `<span class="bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-800 uppercase px-2.5 py-1 rounded-xl flex items-center gap-1"><span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Pendente de Relatório</span>`;
+          historicoListaHtml = `<p class="text-xs text-slate-500 italic p-1">Nenhuma visita cadastrada para esta residência até o momento.</p>`;
+        } else {
+          const ultimaVisita = visitasDaFamilia[visitasDaFamilia.length - 1];
+          statusBadge = `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-800 uppercase px-2.5 py-1 rounded-xl flex items-center gap-1">Última visita: ${ultimaVisita.data.split('-').reverse().join('/')}</span>`;
+          
+          historicoListaHtml = `
+            <div class="space-y-2 mt-2">
+              <p class="text-[10px] uppercase font-700 tracking-wider text-slate-500">Histórico de Linha do Tempo</p>
+              <div class="max-h-28 overflow-y-auto space-y-2 pr-2 no-scrollbar">
+                ${visitasDaFamilia.map(v => `
+                  <div class="bg-slate-950/40 border border-white/5 p-2 rounded-lg text-xs space-y-1">
+                    <div class="flex justify-between items-center text-[10px]">
+                      <span class="font-700 text-slate-300">${v.data.split('-').reverse().join('/')} — ${v.motivo}</span>
+                      <span class="font-800 px-1.5 rounded text-[9px] ${v.desfecho === 'Realizada' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${v.desfecho}</span>
+                    </div>
+                    ${v.notas ? `<p class="text-slate-400 italic text-[11px] leading-relaxed">"${v.notas}"</p>` : ''}
+                  </div>
+                `).reverse().join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML += `
+          <div class="bg-slate-900 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1 flex-1">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h4 class="font-800 text-white text-base">${fam.responsavel}</h4>
+                <span class="text-xs bg-slate-800 text-slate-400 font-700 px-2 py-0.5 rounded-lg border border-white/5">Nº ${fam.prontuario}</span>
+                ${statusBadge}
+              </div>
+              <p class="text-xs text-slate-400">${fam.logradouro}, Nº ${fam.numCasa} ${fam.complemento ? `(${fam.complemento})` : ''} — Bairro: ${fam.bairro}</p>
+              ${historicoListaHtml}
+            </div>
+            
+            <div class="self-end md:self-center flex-shrink-0">
+              <button onclick="openVisitForm('${fam.prontuario}', '${fam.responsavel}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-md">
+                <i data-lucide="file-plus" style="width:14px;height:14px;"></i> Registrar Visita
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      lucide.createIcons();
+    }
+
+    function openVisitForm(prontuario, responsavel) {
+      document.getElementById('visitProntuarioTarget').value = prontuario;
+      document.getElementById('visitFormTitle').innerHTML = `<i data-lucide="file-plus" class="text-emerald-400"></i> Lançar Relatório de Visita — Casa de ${responsavel}`;
+      
+      // Coloca por padrão a data de hoje no input date
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById('visitDate').value = hoje;
+      document.getElementById('visitReason').value = "";
+      document.getElementById('visitOutcome').value = "Realizada";
+      document.getElementById('visitNotes').value = "";
+
+      document.getElementById('visitFormContainer').classList.remove('hidden');
+      document.getElementById('visitFormContainer').scrollIntoView({ behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    function closeVisitForm() {
+      document.getElementById('visitFormContainer').classList.add('hidden');
+    }
+
+    function saveVisitReport(event) {
+      event.preventDefault();
+      
+      const prontuario = document.getElementById('visitProntuarioTarget').value;
+      const data = document.getElementById('visitDate').value;
+      const motivo = document.getElementById('visitReason').value;
+      const desfecho = document.getElementById('visitOutcome').value;
+      const notas = document.getElementById('visitNotes').value;
+
+      const visitasGerais = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      
+      visitasGerais.push({
+        agenteLogin: sessaoAtiva.login,
+        prontuario,
+        data,
+        motivo,
+        desfecho,
+        notas
+      });
+
+      localStorage.setItem('visitas_historico', JSON.stringify(visitasGerais));
+
+      // Sincroniza e incrementa contagem de visitas nas estatísticas do Agente
+      sessaoAtiva.visitas = (parseInt(sessaoAtiva.visitas) || 0) + 1;
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+      document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas;
+
+      // Sincroniza na tabela geral de Agentes
+      const agentesGerais = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentesGerais.findIndex(a => a.login === sessaoAtiva.login);
+      if(idx !== -1) {
+        agentesGerais[idx].visitas = sessaoAtiva.visitas;
+        localStorage.setItem('agentes', JSON.stringify(agentesGerais));
+      }
+
+      alert('Relatório de Visita Domiciliar salvo com sucesso e computado no sistema!');
+      closeVisitForm();
+      carregarPainelVisitas();
+    }
+
+    window.addEventListener('hashchange', updateNavigation);
+    
+    window.addEventListener('load', () => {
+      sessaoAtiva = JSON.parse(localStorage.getItem('agente_sessao'));
+
+      if(!sessaoAtiva) {
+        alert('Nenhum agente logado.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      document.getElementById('boasVindas').innerText = `Bem-vindo(a), ${sessaoAtiva.name}!`;
+      document.getElementById('infoUnidade').innerText = `Unidade: ${sessaoAtiva.unit} | Área: ${sessaoAtiva.area || 'Não informada'}`;
+      document.getElementById('nomeAcsSide').innerText = sessaoAtiva.name;
+      document.getElementById('nomeUnidadeSide').innerText = sessaoAtiva.unit;
+      
+      document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
+      document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
+
+      prepareNewFamilyForm();
+      document.getElementById('familyFormContainer').classList.add('hidden'); // garante oculto no load
+      carregarFamilias();
+      updateNavigation();
+    });
+  </script>
+</body>
+</html>
