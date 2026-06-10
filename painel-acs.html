@@ -336,7 +336,6 @@
         }
       });
 
-      // Se clicar na aba famílias pelo menu, exibe a listagem; se vier de openFamilyRegistration, mantém o form
       if (hash === '#families') {
         if (_abrindoCadastro) {
           _abrindoCadastro = false;
@@ -633,6 +632,9 @@
                   <button onclick="editarFamilia('${fam.prontuario}')" class="bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-700 transition-all flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="edit" style="width:13px;height:13px;"></i> Editar Ficha
                   </button>
+                  <button onclick="excluirFamilia('${fam.prontuario}', '${fam.responsavel}')" class="bg-white/5 hover:bg-red-500/20 text-slate-300 hover:text-red-400 border border-white/10 px-3 py-1.5 rounded-xl text-xs font-700 transition-all flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Excluir
+                  </button>
                   <span class="text-xs font-700 bg-slate-800 border border-white/10 text-slate-300 px-2.5 py-1.5 rounded-lg">
                     ${fam.membros.length} ${fam.membros.length === 1 ? 'Morador' : 'Moradores'}
                   </span>
@@ -747,11 +749,16 @@
             <div class="space-y-2 mt-2">
               <p class="text-[10px] uppercase font-700 tracking-wider text-slate-500">Histórico de Linha do Tempo</p>
               <div class="max-h-28 overflow-y-auto space-y-2 pr-2 no-scrollbar">
-                ${visitasDaFamilia.map(v => `
+                ${visitasDaFamilia.map((v, idx) => `
                   <div class="bg-slate-950/40 border border-white/5 p-2 rounded-lg text-xs space-y-1">
                     <div class="flex justify-between items-center text-[10px]">
                       <span class="font-700 text-slate-300">${v.data.split('-').reverse().join('/')} — ${v.motivo}</span>
-                      <span class="font-800 px-1.5 rounded text-[9px] ${v.desfecho === 'Realizada' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${v.desfecho}</span>
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-800 px-1.5 rounded text-[9px] ${v.desfecho === 'Realizada' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}">${v.desfecho}</span>
+                        <button onclick="excluirVisita('${fam.prontuario}', ${idx})" class="text-slate-600 hover:text-red-400 transition-colors ml-1" title="Excluir visita">
+                          <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
+                        </button>
+                      </div>
                     </div>
                     ${v.notas ? `<p class="text-slate-400 italic text-[11px] leading-relaxed">"${v.notas}"</p>` : ''}
                   </div>
@@ -839,6 +846,55 @@
 
     window.addEventListener('hashchange', updateNavigation);
     
+    function excluirFamilia(prontuario, responsavel) {
+      if (!confirm(`Excluir a família de "${responsavel}" (Nº ${prontuario})?\n\nEsta ação também removerá todas as visitas registradas para esta família.`)) return;
+
+      let familias = JSON.parse(localStorage.getItem('familias')) || [];
+      familias = familias.filter(f => f.prontuario !== prontuario);
+      localStorage.setItem('familias', JSON.stringify(familias));
+
+      let visitas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      visitas = visitas.filter(v => v.prontuario !== prontuario);
+      localStorage.setItem('visitas_historico', JSON.stringify(visitas));
+
+      // Atualiza contador no localStorage e na sessão
+      const minhasFamilias = familias.filter(f => f.agenteLogin === sessaoAtiva.login);
+      sessaoAtiva.familias = minhasFamilias.length;
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+      document.getElementById('acsFamilias').innerText = minhasFamilias.length;
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
+      if (idx !== -1) { agentes[idx].familias = minhasFamilias.length; localStorage.setItem('agentes', JSON.stringify(agentes)); }
+
+      carregarFamilias();
+    }
+
+    function excluirVisita(prontuario, indiceReverso) {
+      if (!confirm('Excluir este registro de visita?')) return;
+
+      let visitas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      const daFamilia = visitas.filter(v => v.prontuario === prontuario);
+      const outras = visitas.filter(v => v.prontuario !== prontuario);
+
+      // O histórico é exibido em ordem reversa, então convertemos o índice
+      const indiceReal = daFamilia.length - 1 - indiceReverso;
+      daFamilia.splice(indiceReal, 1);
+
+      localStorage.setItem('visitas_historico', JSON.stringify([...outras, ...daFamilia]));
+
+      // Atualiza contador de visitas
+      sessaoAtiva.visitas = Math.max(0, (parseInt(sessaoAtiva.visitas) || 0) - 1);
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+      document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas;
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
+      if (idx !== -1) { agentes[idx].visitas = sessaoAtiva.visitas; localStorage.setItem('agentes', JSON.stringify(agentes)); }
+
+      carregarPainelVisitas();
+    }
+
     window.addEventListener('load', () => {
       sessaoAtiva = JSON.parse(localStorage.getItem('agente_sessao'));
 
