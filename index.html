@@ -6,15 +6,13 @@
   <title>ACS Conecta - Login</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilo.css">
  </head>
  <body class="h-full bg-slate-950 text-slate-100">
   <div id="app" class="h-full w-full flex login-container items-center justify-center p-4">
    
-   <!-- Card alinhado com o estilo do painel (bg-slate-900 e max-w-xs) -->
    <div class="login-card w-full max-w-xs bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl">
-    <!-- Logo -->
     <div class="flex items-center justify-center gap-2 mb-6">
      <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
       <i data-lucide="heart-pulse" style="width:20px;height:20px;" class="text-white"></i>
@@ -22,58 +20,116 @@
      <span class="font-800 text-xl text-white">ACS Conecta</span>
     </div>
 
-    <!-- Title -->
     <h1 class="text-2xl font-800 text-white text-center mb-1">Bem-vindo</h1>
     <p class="text-slate-400 text-xs text-center mb-6">Central do ACS</p>
 
-    <!-- Login Form -->
     <form action="pagina1.html" class="space-y-4 flex flex-col">
-     <!-- Username Field -->
      <div>
       <label for="username" class="block text-xs font-600 text-slate-300 mb-1">Usuário</label> 
       <input type="text" id="username" placeholder="Digite seu usuário" class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
      </div>
 
-     <!-- Password Field -->
      <div>
       <label for="password" class="block text-xs font-600 text-slate-300 mb-1">Senha</label> 
       <input type="password" id="password" placeholder="Digite sua senha" class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
      </div>
 
-     <!-- Remember Me -->
      <div class="flex items-center gap-2">
       <input type="checkbox" id="remember" class="w-4 h-4 rounded accent-emerald-500 bg-white/5 border-white/10"> 
       <label for="remember" class="text-xs text-slate-400">Lembrar de mim</label>
      </div>
 
-     <!-- Login Button -->
      <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors duration-200 transform hover:scale-105 mt-2">Entrar</button>
     </form>
 
-    <!-- Links de Navegação -->
     <div class="mt-5 text-center">
      <p class="text-slate-400 text-xs">Esqueceu sua senha? <a href="#" class="text-emerald-400 hover:text-emerald-300 font-600 transition-colors">Recuperar</a></p>
     </div>
 
-    <!-- Divisória sutil -->
     <div class="mt-4 pt-4 border-t border-white/5 flex flex-col gap-2">
-     <!-- Botão: Área Gerencial -->
-     <a href="gerencia.html" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
+     <button type="button" onclick="abrirModalSenha()" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
       <i data-lucide="shield-check" style="width:16px;height:16px;" class="text-emerald-400"></i>
       Área Gerencial
-     </a>
+     </button>
     </div>
 
-    <!-- Footer -->
     <div class="mt-6 pt-4 border-t border-white/5 text-center">
      <p class="text-[10px] text-slate-500">© 2024 ACS Conecta.</p>
     </div>
    </div>
 
   </div>
-  <!-- Altere apenas o <script> no final do index.html ou substitua a função de submit conforme abaixo -->
+
+  <!-- Modal Senha Gerencial -->
+  <div id="modalSenha" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center">
+          <i data-lucide="shield-check" style="width:20px;height:20px;" class="text-emerald-400"></i>
+        </div>
+        <div>
+          <p class="font-700 text-white text-sm">Área Gerencial</p>
+          <p class="text-slate-400 text-xs">Digite a senha de acesso</p>
+        </div>
+      </div>
+      <div class="relative">
+        <input type="password" id="senhaGerencial" placeholder="Senha"
+          onkeydown="if(event.key==='Enter') confirmarSenha()"
+          class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all pr-10">
+        <button type="button" onclick="toggleSenhaVisivel()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+          <i id="iconOlho" data-lucide="eye" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <p id="erroSenha" class="text-red-400 text-xs mt-2 hidden">Senha incorreta. Tente novamente.</p>
+      <div class="flex gap-2 mt-5">
+        <button onclick="fecharModalSenha()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-600 text-sm transition-colors">Cancelar</button>
+        <button onclick="confirmarSenha()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Entrar</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   lucide.createIcons();
+
+  function abrirModalSenha() {
+    document.getElementById('senhaGerencial').value = '';
+    document.getElementById('erroSenha').classList.add('hidden');
+    document.getElementById('modalSenha').classList.remove('hidden');
+    setTimeout(() => document.getElementById('senhaGerencial').focus(), 50);
+  }
+
+  function fecharModalSenha() {
+    document.getElementById('modalSenha').classList.add('hidden');
+  }
+
+  function confirmarSenha() {
+    const senha = document.getElementById('senhaGerencial').value;
+    if (senha === 'admin123') {
+      window.location.href = 'gerencia.html';
+    } else {
+      document.getElementById('erroSenha').classList.remove('hidden');
+      document.getElementById('senhaGerencial').value = '';
+      document.getElementById('senhaGerencial').focus();
+    }
+  }
+
+  function toggleSenhaVisivel() {
+    const input = document.getElementById('senhaGerencial');
+    const icon = document.getElementById('iconOlho');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+      input.type = 'password';
+      icon.setAttribute('data-lucide', 'eye');
+    }
+    lucide.createIcons();
+  }
+
+  // Fechar clicando fora do modal
+  document.getElementById('modalSenha').addEventListener('click', function(e) {
+    if (e.target === this) fecharModalSenha();
+  });
 
   document.querySelector('form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -82,11 +138,9 @@
 
     const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
     
-    // Procura o agente correspondente
     const agenteLogado = agentes.find(a => a.login === userIn && a.password === passIn);
 
     if (agenteLogado) {
-      // Guarda a sessão do usuário logado no momento
       localStorage.setItem('agente_sessao', JSON.stringify(agenteLogado));
       window.location.href = 'painel-acs.html';
     } else {
