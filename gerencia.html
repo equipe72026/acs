@@ -1,52 +1,96 @@
 <!doctype html>
-<html lang="pt-BR" class="h-full">
+<html lang="pt-BR" class="h-full dark">
 <head>
+  <script src="/_sdk/telemetry_sdk.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ACS Conecta - Painel Gerencial</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' };
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { box-sizing: border-box; }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
 </head>
-<body class="h-full bg-slate-950 text-slate-100 flex flex-col md:flex-row overflow-hidden">
+<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row overflow-hidden transition-colors duration-200">
 
   <!-- Sidebar -->
-  <aside class="w-64 bg-slate-900 border-r border-white/10 p-6 hidden md:flex flex-col flex-shrink-0">
+  <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/10 p-6 hidden md:flex flex-col flex-shrink-0 transition-colors duration-200">
     <div class="flex items-center gap-3 mb-8">
       <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
         <i data-lucide="shield-check" class="text-white" style="width:20px;height:20px;"></i>
       </div>
       <div>
-        <span class="font-800 text-base block leading-none">ACS Conecta</span>
-        <span class="text-[10px] text-emerald-400 font-700 tracking-wider uppercase">Gerencial</span>
+        <span class="font-800 text-base block leading-none text-slate-900 dark:text-white">ACS Conecta</span>
+        <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-700 tracking-wider uppercase">Gerencial</span>
       </div>
     </div>
+
     <nav class="space-y-2 flex-1">
-      <a href="#" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-slate-800 text-white font-600">
-        <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i> Estatísticas
+      <a href="#" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-600">
+        <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i>
+        Estatísticas
       </a>
-      <a href="cadastro.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-        <i data-lucide="user-plus" style="width:18px;height:18px;"></i> Cadastrar Agente
+      <a href="cadastro.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
+        Cadastrar Agente
       </a>
+
+      <button onclick="abrirRelatorios()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i data-lucide="file-bar-chart" style="width:18px;height:18px;"></i>
+        Relatórios
+      </button>
+
+      <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i id="theme-icon-desktop" data-lucide="moon" style="width:18px;height:18px;"></i>
+        <span id="theme-text-desktop">Modo Claro</span>
+      </button>
+
+      <button onclick="abrirModalSenha()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i data-lucide="key-round" style="width:18px;height:18px;"></i>
+        Alterar Senha
+      </button>
     </nav>
-    <div class="border-t border-white/10 pt-4">
-      <a href="index.html" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/5 text-slate-300 hover:bg-red-600/20 hover:text-red-400 transition-colors font-600 text-sm justify-center">
-        <i data-lucide="log-out" style="width:16px;height:16px;"></i> Sair do Painel
+
+    <div class="border-t border-slate-200 dark:border-white/10 pt-4">
+      <a href="index.html" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-red-600/20 hover:text-red-600 hover:dark:text-red-400 transition-colors font-600 text-sm justify-center">
+        <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+        Sair do Painel
       </a>
     </div>
   </aside>
 
   <!-- Bottom Nav Mobile -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 p-4 flex justify-around items-center z-50">
-    <a href="#" class="flex flex-col items-center gap-1 text-white">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 p-4 flex justify-around items-center z-50 transition-colors duration-200">
+    <a href="#" class="flex flex-col items-center gap-1 text-slate-900 dark:text-white">
       <i data-lucide="bar-chart-3" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Estatísticas</span>
     </a>
-    <a href="cadastro.html" class="flex flex-col items-center gap-1 text-slate-400">
+    <a href="cadastro.html" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
       <i data-lucide="user-plus" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Cadastrar</span>
     </a>
-    <a href="index.html" class="flex flex-col items-center gap-1 text-red-400">
+
+    <button onclick="abrirRelatorios()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+      <i data-lucide="file-bar-chart" style="width:20px;height:20px;"></i>
+      <span class="text-[10px]">Relatórios</span>
+    </button>
+
+    <button onclick="toggleDarkMode()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+      <i id="theme-icon-mobile" data-lucide="moon" style="width:20px;height:20px;"></i>
+      <span class="text-[10px]">Tema</span>
+    </button>
+
+    <button onclick="abrirModalSenha()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+      <i data-lucide="key-round" style="width:20px;height:20px;"></i>
+      <span class="text-[10px]">Senha</span>
+    </button>
+    <a href="index.html" class="flex flex-col items-center gap-1 text-red-500 dark:text-red-400">
       <i data-lucide="log-out" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Sair</span>
     </a>
@@ -54,46 +98,49 @@
 
   <!-- Main Content -->
   <main class="flex-1 overflow-y-auto p-4 md:p-8 max-w-6xl mx-auto space-y-6 w-full pb-24">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/5 p-6 rounded-2xl border border-white/10">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-white/5 p-6 rounded-2xl border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none transition-colors duration-200">
       <div>
-        <h1 class="text-2xl md:text-3xl font-800 text-white tracking-tight">Painel de Controle</h1>
-        <p class="text-slate-400 text-sm mt-1">Estatísticas em tempo real baseadas no localStorage.</p>
+        <h1 class="text-2xl md:text-3xl font-800 text-slate-900 dark:text-white tracking-tight">Painel de Controle</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Estatísticas em tempo real baseadas no localStorage.</p>
       </div>
       <a href="cadastro.html" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
-        <i data-lucide="user-plus" style="width:18px;height:18px;"></i> Cadastrar Novo Agente
+        <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
+        Cadastrar Novo Agente
       </a>
     </div>
 
     <!-- Cards Dinâmicos -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
-        <p class="text-3xl font-800 text-white" id="totalFamilias">0</p>
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Famílias Cadastradas</p>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none transition-colors duration-200">
+        <p class="text-3xl font-800 text-slate-900 dark:text-white" id="totalFamilias">0</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-700 mt-1">Famílias Cadastradas</p>
       </div>
-      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
-        <p class="text-3xl font-800 text-white" id="totalVisitas">0</p>
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Realizadas</p>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none transition-colors duration-200">
+        <p class="text-3xl font-800 text-slate-900 dark:text-white" id="totalVisitas">0</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Realizadas</p>
       </div>
-      <div class="bg-slate-900 rounded-2xl p-5 border border-white/10">
-        <p class="text-3xl font-800 text-white" id="totalAgentes">0</p>
-        <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Agentes Ativos</p>
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none transition-colors duration-200">
+        <p class="text-3xl font-800 text-slate-900 dark:text-white" id="totalAgentes">0</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-700 mt-1">Agentes Ativos</p>
       </div>
     </div>
 
     <!-- Tabela Gerada Automaticamente -->
-    <div class="bg-slate-900 rounded-2xl border border-white/10 p-5">
-      <h2 class="font-800 text-lg text-white mb-4">Lista de Profissionais Cadastrados</h2>
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-5 shadow-sm dark:shadow-none transition-colors duration-200">
+      <h2 class="font-800 text-lg text-slate-900 dark:text-white mb-4">Lista de Profissionais Cadastrados</h2>
       <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-slate-300">
-          <thead class="text-xs uppercase text-slate-400 border-b border-white/10">
+        <table class="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+          <thead class="text-xs uppercase text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/10">
             <tr>
               <th class="pb-3 font-700">Nome do Profissional</th>
               <th class="pb-3 font-700">Unidade</th>
+              <th class="pb-3 font-700">Equipe</th>
               <th class="pb-3 font-700 text-center">Famílias</th>
               <th class="pb-3 font-700 text-center">Visitas</th>
+              <th class="pb-3 font-700 text-center">Ações</th>
             </tr>
           </thead>
-          <tbody id="listaAgentes" class="divide-y divide-white/5">
+          <tbody id="listaAgentes" class="divide-y divide-slate-100 dark:divide-white/5">
             <!-- Inserido via JS -->
           </tbody>
         </table>
@@ -101,28 +148,202 @@
     </div>
   </main>
 
+  <!-- Modal Relatórios Gerencial -->
+  <div id="modalRelatorios" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+            <i data-lucide="file-bar-chart" style="width:18px;height:18px;" class="text-emerald-500 dark:text-emerald-400"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-800 text-slate-900 dark:text-white">Relatórios Gerenciais</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Visualize e exporte dados de todos os agentes.</p>
+          </div>
+        </div>
+        <button onclick="fecharRelatorios()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Filtro de Agente -->
+      <div>
+        <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Filtrar por Agente</label>
+        <select id="relAgenteSelect" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 [&>option]:text-black [&>option]:bg-white">
+          <option value="__todos__">Todos os agentes</option>
+        </select>
+      </div>
+
+      <!-- Card: Visitas Mensais -->
+      <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 p-5 space-y-4">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="calendar-check" style="width:16px;height:16px;" class="text-emerald-500 dark:text-emerald-400"></i>
+          <h4 class="font-800 text-slate-900 dark:text-white text-sm">Relatório Mensal de Visitas</h4>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1">
+            <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Mês</label>
+            <select id="relMesGer" class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 [&>option]:text-black [&>option]:bg-white">
+              <option value="01">Janeiro</option><option value="02">Fevereiro</option>
+              <option value="03">Março</option><option value="04">Abril</option>
+              <option value="05">Maio</option><option value="06">Junho</option>
+              <option value="07">Julho</option><option value="08">Agosto</option>
+              <option value="09">Setembro</option><option value="10">Outubro</option>
+              <option value="11">Novembro</option><option value="12">Dezembro</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Ano</label>
+            <input type="number" id="relAnoGer" min="2020" max="2099" class="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+        </div>
+        <div id="previewVisitasGer" class="hidden bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-xl p-4 text-sm">
+          <p id="resumoVisitasGer" class="font-700 text-slate-900 dark:text-white mb-2"></p>
+          <div id="listaPreviewVisitasGer" class="space-y-1 text-xs max-h-48 overflow-y-auto"></div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="previewVisitasGer()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-700 text-sm transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="eye" style="width:15px;height:15px;"></i> Visualizar
+          </button>
+          <button onclick="exportarVisitasGerXML()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="download" style="width:15px;height:15px;"></i> Exportar XML
+          </button>
+        </div>
+      </div>
+
+      <!-- Card: Famílias -->
+      <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-white/10 p-5 space-y-4">
+        <div class="flex items-center gap-2 mb-1">
+          <i data-lucide="users" style="width:16px;height:16px;" class="text-blue-500 dark:text-blue-400"></i>
+          <h4 class="font-800 text-slate-900 dark:text-white text-sm">Relatório de Famílias Cadastradas</h4>
+        </div>
+        <div id="previewFamiliasGer" class="hidden bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-xl p-4 text-sm">
+          <p id="resumoFamiliasGer" class="font-700 text-slate-900 dark:text-white mb-2"></p>
+          <div id="listaPreviewFamiliasGer" class="space-y-1 text-xs max-h-48 overflow-y-auto"></div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="previewFamiliasGer()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-700 text-sm transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="eye" style="width:15px;height:15px;"></i> Visualizar
+          </button>
+          <button onclick="exportarFamiliasGerXML()" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-700 text-sm transition-colors flex items-center justify-center gap-2">
+            <i data-lucide="download" style="width:15px;height:15px;"></i> Exportar XML
+          </button>
+        </div>
+      </div>
+
+      <button onclick="fecharRelatorios()" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-600 text-sm transition-colors">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Modal para Alterar Senha -->
+  <div id="modalSenha" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-100 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full space-y-4 shadow-xl">
+      <h3 class="text-lg font-800 text-slate-900 dark:text-white">Alterar Senha de Acesso</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Digite e confirme sua nova senha de gerente.</p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nova Senha</label>
+          <input type="password" id="novaSenha" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Confirmar Nova Senha</label>
+          <input type="password" id="confirmarSenha" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="fecharModalSenha()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-600 text-sm transition-colors">Cancelar</button>
+        <button onclick="salvarNovaSenha()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    window.addEventListener('load', () => {
+    function aplicarTema(tema) {
+      const html = document.documentElement;
+      const iconDesktop = document.getElementById('theme-icon-desktop');
+      const textDesktop = document.getElementById('theme-text-desktop');
+      const iconMobile = document.getElementById('theme-icon-mobile');
+
+      if (tema === 'dark') {
+        html.classList.add('dark');
+        iconDesktop.setAttribute('data-lucide', 'sun');
+        textDesktop.innerText = 'Modo Claro';
+        iconMobile.setAttribute('data-lucide', 'sun');
+      } else {
+        html.classList.remove('dark');
+        iconDesktop.setAttribute('data-lucide', 'moon');
+        textDesktop.innerText = 'Modo Escuro';
+        iconMobile.setAttribute('data-lucide', 'moon');
+      }
+      lucide.createIcons();
+    }
+
+    function toggleDarkMode() {
+      const novoTema = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+      localStorage.setItem('theme', novoTema);
+      aplicarTema(novoTema);
+    }
+
+    function abrirModalSenha() {
+      document.getElementById('modalSenha').classList.remove('hidden');
+    }
+
+    function fecharModalSenha() {
+      document.getElementById('modalSenha').classList.add('hidden');
+      document.getElementById('novaSenha').value = '';
+      document.getElementById('confirmarSenha').value = '';
+    }
+
+    function salvarNovaSenha() {
+      const novaSenha = document.getElementById('novaSenha').value;
+      const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+      if (!novaSenha || !confirmarSenha) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+
+      if (novaSenha !== confirmarSenha) {
+        alert('As senhas no coincidem. Tente novamente.');
+        return;
+      }
+
+      localStorage.setItem('senhaGerente', novaSenha);
+      alert('Senha do gerenciador alterada com sucesso!');
+      fecharModalSenha();
+    }
+
+    window.addEventListener('load', function () {
+      const temaSalvo = localStorage.getItem('theme') || 'dark';
+      aplicarTema(temaSalvo);
+
       const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
-      
       let qtdFamilias = 0;
       let qtdVisitas = 0;
       const tabela = document.getElementById('listaAgentes');
 
-      if(agentes.length === 0) {
-        tabela.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-500">Nenhum agente cadastrado no LocalStorage.</td></tr>`;
+      if (agentes.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-slate-500">Nenhum agente cadastrado no LocalStorage.</td></tr>';
       } else {
         tabela.innerHTML = '';
-        agentes.forEach(agente => {
+        agentes.forEach((agente, index) => {
           qtdFamilias += agente.familias || 0;
           qtdVisitas += agente.visitas || 0;
 
           tabela.innerHTML += `
             <tr>
-              <td class="py-3 font-600 text-white">${agente.name}</td>
-              <td class="py-3 text-slate-400">${agente.unit}</td>
-              <td class="py-3 text-center">${agente.familias}</td>
-              <td class="py-3 text-center text-emerald-400 font-600">${agente.visitas}</td>
+              <td class="py-3 font-600 text-slate-900 dark:text-white">${agente.name}</td>
+              <td class="py-3 text-slate-500 dark:text-slate-400">${agente.unit}</td>
+              <td class="py-3 text-slate-500 dark:text-slate-400">${agente.team || 'N/A'}</td>
+              <td class="py-3 text-center">${agente.familias || 0}</td>
+              <td class="py-3 text-center text-emerald-600 dark:text-emerald-400 font-600">${agente.visitas || 0}</td>
+              <td class="py-3 text-center">
+                <a href="cadastro.html?edit=${index}" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors">
+                  <i data-lucide="pencil" style="width:14px;height:14px;"></i>
+                  Editar
+                </a>
+              </td>
             </tr>
           `;
         });
@@ -131,9 +352,178 @@
       document.getElementById('totalFamilias').innerText = qtdFamilias;
       document.getElementById('totalVisitas').innerText = qtdVisitas;
       document.getElementById('totalAgentes').innerText = agentes.length;
-      
       lucide.createIcons();
     });
+
+    function abrirRelatorios() {
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const select = document.getElementById('relAgenteSelect');
+      select.innerHTML = '<option value="__todos__">Todos os agentes</option>';
+      agentes.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.login;
+        opt.textContent = `${a.name} (${a.unit})`;
+        select.appendChild(opt);
+      });
+
+      const agora = new Date();
+      document.getElementById('relMesGer').value = String(agora.getMonth() + 1).padStart(2, '0');
+      document.getElementById('relAnoGer').value = agora.getFullYear();
+
+      document.getElementById('previewVisitasGer').classList.add('hidden');
+      document.getElementById('previewFamiliasGer').classList.add('hidden');
+      document.getElementById('modalRelatorios').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharRelatorios() {
+      document.getElementById('modalRelatorios').classList.add('hidden');
+    }
+
+    function getVisitasFiltradas() {
+      const login = document.getElementById('relAgenteSelect').value;
+      const mes = document.getElementById('relMesGer').value;
+      const ano = document.getElementById('relAnoGer').value;
+      const todas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      return todas.filter(v => {
+        const [y, m] = (v.data || '').split('-');
+        const periodoOk = m === mes && y === String(ano);
+        const agenteOk = login === '__todos__' || v.agenteLogin === login;
+        return periodoOk && agenteOk;
+      });
+    }
+
+    function getFamiliasFiltradas() {
+      const login = document.getElementById('relAgenteSelect').value;
+      const todas = JSON.parse(localStorage.getItem('familias')) || [];
+      return login === '__todos__' ? todas : todas.filter(f => f.agenteLogin === login);
+    }
+
+    function nomeAgente(login) {
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const a = agentes.find(x => x.login === login);
+      return a ? a.name : login;
+    }
+
+    function previewVisitasGer() {
+      const mes = document.getElementById('relMesGer').value;
+      const ano = document.getElementById('relAnoGer').value;
+      const visitas = getVisitasFiltradas();
+      const nomesMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      const filtroLabel = document.getElementById('relAgenteSelect').selectedOptions[0].textContent;
+
+      document.getElementById('resumoVisitasGer').innerText = `${visitas.length} visita(s) — ${nomesMes[parseInt(mes)]}/${ano} — ${filtroLabel}`;
+      const lista = document.getElementById('listaPreviewVisitasGer');
+      if (visitas.length === 0) {
+        lista.innerHTML = '<p class="text-slate-500">Nenhuma visita encontrada neste período.</p>';
+      } else {
+        lista.innerHTML = visitas.map(v => `
+          <div class="flex justify-between gap-2 py-1 border-b border-slate-100 dark:border-white/5">
+            <span class="text-slate-600 dark:text-slate-300">${v.data ? v.data.split('-').reverse().join('/') : '—'} — Pront. Nº ${v.prontuario} — <span class="text-slate-400">${nomeAgente(v.agenteLogin)}</span></span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-700">${v.desfecho || ''}</span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('previewVisitasGer').classList.remove('hidden');
+    }
+
+    function previewFamiliasGer() {
+      const familias = getFamiliasFiltradas();
+      const filtroLabel = document.getElementById('relAgenteSelect').selectedOptions[0].textContent;
+      document.getElementById('resumoFamiliasGer').innerText = `${familias.length} família(s) — ${filtroLabel}`;
+      const lista = document.getElementById('listaPreviewFamiliasGer');
+      if (familias.length === 0) {
+        lista.innerHTML = '<p class="text-slate-500">Nenhuma família encontrada.</p>';
+      } else {
+        lista.innerHTML = familias.map(f => `
+          <div class="flex justify-between gap-2 py-1 border-b border-slate-100 dark:border-white/5">
+            <span class="text-slate-600 dark:text-slate-300">Nº ${f.prontuario} — ${f.responsavel}</span>
+            <span class="text-blue-600 dark:text-blue-400 font-700">${(f.membros||[]).length} membro(s) — <span class="text-slate-400">${nomeAgente(f.agenteLogin)}</span></span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('previewFamiliasGer').classList.remove('hidden');
+    }
+
+    function baixarXML(conteudo, nomeArquivo) {
+      const blob = new Blob([conteudo], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = nomeArquivo; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarVisitasGerXML() {
+      const mes = document.getElementById('relMesGer').value;
+      const ano = document.getElementById('relAnoGer').value;
+      const visitas = getVisitasFiltradas();
+      const nomesMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      const filtroLogin = document.getElementById('relAgenteSelect').value;
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<relatorioVisitasGerencial>\n`;
+      xml += `  <periodo>${nomesMes[parseInt(mes)]}/${ano}</periodo>\n`;
+      xml += `  <filtroAgente>${filtroLogin === '__todos__' ? 'Todos' : filtroLogin}</filtroAgente>\n`;
+      xml += `  <totalVisitas>${visitas.length}</totalVisitas>\n`;
+      xml += `  <visitas>\n`;
+      visitas.forEach(v => {
+        const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        xml += `    <visita>\n`;
+        xml += `      <agente>${nomeAgente(v.agenteLogin)}</agente>\n`;
+        xml += `      <loginAgente>${v.agenteLogin || ''}</loginAgente>\n`;
+        xml += `      <data>${v.data || ''}</data>\n`;
+        xml += `      <prontuario>${v.prontuario || ''}</prontuario>\n`;
+        xml += `      <motivo>${esc(v.motivo)}</motivo>\n`;
+        xml += `      <desfecho>${v.desfecho || ''}</desfecho>\n`;
+        xml += `      <notas>${esc(v.notas)}</notas>\n`;
+        xml += `    </visita>\n`;
+      });
+      xml += `  </visitas>\n</relatorioVisitasGerencial>`;
+      baixarXML(xml, `gerencial_visitas_${mes}_${ano}.xml`);
+    }
+
+    function exportarFamiliasGerXML() {
+      const familias = getFamiliasFiltradas();
+      const filtroLogin = document.getElementById('relAgenteSelect').value;
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<relatorioFamiliasGerencial>\n`;
+      xml += `  <filtroAgente>${filtroLogin === '__todos__' ? 'Todos' : filtroLogin}</filtroAgente>\n`;
+      xml += `  <totalFamilias>${familias.length}</totalFamilias>\n`;
+      xml += `  <familias>\n`;
+      familias.forEach(f => {
+        const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        xml += `    <familia>\n`;
+        xml += `      <agente>${nomeAgente(f.agenteLogin)}</agente>\n`;
+        xml += `      <prontuario>${f.prontuario || ''}</prontuario>\n`;
+        xml += `      <responsavel>${esc(f.responsavel)}</responsavel>\n`;
+        xml += `      <logradouro>${esc(f.logradouro)}</logradouro>\n`;
+        xml += `      <numero>${f.numCasa || ''}</numero>\n`;
+        xml += `      <complemento>${esc(f.complemento)}</complemento>\n`;
+        xml += `      <bairro>${esc(f.bairro)}</bairro>\n`;
+        xml += `      <cidade>${esc(f.cidade)}</cidade>\n`;
+        xml += `      <uf>${f.uf || ''}</uf>\n`;
+        xml += `      <membros>\n`;
+        (f.membros || []).forEach(m => {
+          xml += `        <membro>\n`;
+          xml += `          <nome>${esc(m.nome)}</nome>\n`;
+          xml += `          <nascimento>${m.nascimento || ''}</nascimento>\n`;
+          xml += `          <sexo>${m.sexo || ''}</sexo>\n`;
+          xml += `          <cpf>${m.cpf || ''}</cpf>\n`;
+          xml += `          <sus>${m.sus || ''}</sus>\n`;
+          xml += `          <telefone>${m.telefone || ''}</telefone>\n`;
+          xml += `          <hipertenso>${m.hipertenso ? 'sim' : 'nao'}</hipertenso>\n`;
+          xml += `          <diabetico>${m.diabetico ? 'sim' : 'nao'}</diabetico>\n`;
+          xml += `          <gestante>${m.gestante ? 'sim' : 'nao'}</gestante>\n`;
+          xml += `          <vacinaAtrasada>${m.vacinaAtrasada ? 'sim' : 'nao'}</vacinaAtrasada>\n`;
+          xml += `        </membro>\n`;
+        });
+        xml += `      </membros>\n`;
+        xml += `    </familia>\n`;
+      });
+      xml += `  </familias>\n</relatorioFamiliasGerencial>`;
+      baixarXML(xml, `gerencial_familias.xml`);
+    }
   </script>
+
+  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.CFcvparams={r:'a09be0c6ce42e29f',t:'MTc4MTEzMTIyOQ=='};var a=document.createElement('script');a.src='//cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>

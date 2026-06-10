@@ -47,6 +47,12 @@
       <a href="#visits" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
         <i data-lucide="home" style="width:18px;height:18px;"></i> Visitas
       </a>
+      <a href="#relatorios" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="file-bar-chart" style="width:18px;height:18px;"></i> Relatórios
+      </a>
+      <a href="#opcoes" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left hover:bg-slate-800 transition-colors">
+        <i data-lucide="settings" style="width:18px;height:18px;"></i> Opções
+      </a>
     </nav>
 
     <div class="border-t border-white/10 pt-4">
@@ -291,10 +297,377 @@
         <div class="space-y-3" id="listaVisitasFamilias"></div>
       </section>
 
+      <!-- ═══ SEÇÃO RELATÓRIOS ═══════════════════════════════════════════════ -->
+      <section id="relatorios" class="content-section hidden space-y-6">
+
+        <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+          <h2 class="text-2xl font-800 text-white tracking-tight">Relatórios</h2>
+          <p class="text-slate-400 text-sm mt-1">Gere e exporte seus relatórios em XML.</p>
+        </div>
+
+        <!-- Relatório Mensal de Visitas -->
+        <div class="bg-slate-900 rounded-2xl border border-white/10 p-6 space-y-4">
+          <div class="flex items-center gap-3 mb-1">
+            <div class="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i data-lucide="calendar-check" class="text-emerald-400" style="width:18px;height:18px;"></i>
+            </div>
+            <div>
+              <h3 class="font-800 text-white text-base">Relatório Mensal de Visitas</h3>
+              <p class="text-slate-400 text-xs">Selecione o mês e exporte as visitas realizadas.</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1">
+              <label class="block text-xs font-700 uppercase tracking-wider text-slate-400 mb-1">Mês</label>
+              <select id="relMes" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 [&>option]:text-black [&>option]:bg-white">
+                <option value="01">Janeiro</option><option value="02">Fevereiro</option>
+                <option value="03">Março</option><option value="04">Abril</option>
+                <option value="05">Maio</option><option value="06">Junho</option>
+                <option value="07">Julho</option><option value="08">Agosto</option>
+                <option value="09">Setembro</option><option value="10">Outubro</option>
+                <option value="11">Novembro</option><option value="12">Dezembro</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-700 uppercase tracking-wider text-slate-400 mb-1">Ano</label>
+              <input type="number" id="relAno" min="2020" max="2099" class="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+          </div>
+
+          <div id="previewVisitas" class="bg-white/[0.03] border border-white/5 rounded-xl p-4 text-sm text-slate-400 hidden">
+            <p id="resumoVisitas" class="text-white font-700 mb-2"></p>
+            <div id="listaPreviewVisitas" class="space-y-1 text-xs max-h-48 overflow-y-auto"></div>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="previewRelatorioVisitas()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-700 text-sm transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="eye" style="width:15px;height:15px;"></i> Visualizar
+            </button>
+            <button onclick="exportarVisitasXML()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="download" style="width:15px;height:15px;"></i> Exportar XML
+            </button>
+          </div>
+        </div>
+
+        <!-- Relatório de Famílias -->
+        <div class="bg-slate-900 rounded-2xl border border-white/10 p-6 space-y-4">
+          <div class="flex items-center gap-3 mb-1">
+            <div class="w-9 h-9 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i data-lucide="users" class="text-blue-400" style="width:18px;height:18px;"></i>
+            </div>
+            <div>
+              <h3 class="font-800 text-white text-base">Relatório de Famílias Cadastradas</h3>
+              <p class="text-slate-400 text-xs">Exporte todas as famílias e seus membros.</p>
+            </div>
+          </div>
+
+          <div id="previewFamilias" class="bg-white/[0.03] border border-white/5 rounded-xl p-4 text-sm text-slate-400 hidden">
+            <p id="resumoFamilias" class="text-white font-700 mb-2"></p>
+            <div id="listaPreviewFamilias" class="space-y-1 text-xs max-h-48 overflow-y-auto"></div>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="previewRelatorioFamilias()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-700 text-sm transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="eye" style="width:15px;height:15px;"></i> Visualizar
+            </button>
+            <button onclick="exportarFamiliasXML()" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-700 text-sm transition-colors flex items-center justify-center gap-2">
+              <i data-lucide="download" style="width:15px;height:15px;"></i> Exportar XML
+            </button>
+          </div>
+        </div>
+
+      </section>
+
     </div>
   </main>
 
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 px-6 py-3 flex justify-between items-center z-50">
+  <!-- ═══ MODAL / SECTION OPÇÕES ═══════════════════════════════════════════ -->
+  <!-- Overlay -->
+  <div id="opcoesOverlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onclick="fecharOpcoes()"></div>
+
+  <!-- Painel deslizante da direita -->
+  <div id="opcoesPanel"
+    class="fixed top-0 right-0 h-full w-full max-w-sm bg-slate-900 border-l border-white/10 z-50 flex flex-col shadow-2xl translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+
+    <!-- Cabeçalho do painel -->
+    <div class="flex items-center justify-between p-5 border-b border-white/10 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-emerald-500/15 rounded-xl flex items-center justify-center">
+          <i data-lucide="settings" style="width:18px;height:18px;" class="text-emerald-400"></i>
+        </div>
+        <span class="font-800 text-base text-white">Opções</span>
+      </div>
+      <button onclick="fecharOpcoes()" class="text-slate-400 hover:text-white transition-colors p-1">
+        <i data-lucide="x" style="width:20px;height:20px;"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 p-5 space-y-5">
+
+      <!-- ── Meus Dados ── -->
+      <div class="bg-slate-800/60 rounded-2xl border border-white/10 p-5 space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <i data-lucide="user" style="width:16px;height:16px;" class="text-blue-400"></i>
+          <h3 class="font-800 text-sm text-white">Meus Dados</h3>
+        </div>
+
+        <div>
+          <label class="block text-xs font-600 text-slate-300 mb-1">Nome completo</label>
+          <input type="text" id="opt_nome" placeholder="Nome completo"
+            class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-600 text-slate-300 mb-1">Celular</label>
+          <input type="tel" id="opt_phone" oninput="optMaskPhone(this)" maxlength="15" placeholder="(XX) XXXXX-XXXX"
+            class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+        </div>
+        <div>
+          <label class="block text-xs font-600 text-slate-300 mb-1">Email</label>
+          <input type="email" id="opt_email" placeholder="seu@email.com"
+            class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+        </div>
+
+        <p id="opt_msgDados" class="text-xs hidden"></p>
+        <button onclick="optSalvarDados()"
+          class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
+          Salvar dados
+        </button>
+      </div>
+
+      <!-- ── Alterar Senha ── -->
+      <div class="bg-slate-800/60 rounded-2xl border border-white/10 p-5 space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <i data-lucide="lock" style="width:16px;height:16px;" class="text-amber-400"></i>
+          <h3 class="font-800 text-sm text-white">Alterar Senha</h3>
+        </div>
+
+        <div class="relative">
+          <label class="block text-xs font-600 text-slate-300 mb-1">Senha atual</label>
+          <input type="password" id="opt_senhaAtual" placeholder="Senha atual"
+            class="w-full px-3 py-2.5 pr-10 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+          <button type="button" onclick="optToggleVer('opt_senhaAtual','opt_olho1')"
+            class="absolute right-3 bottom-2.5 text-slate-500 hover:text-slate-300 transition-colors">
+            <i id="opt_olho1" data-lucide="eye" style="width:15px;height:15px;"></i>
+          </button>
+        </div>
+        <div class="relative">
+          <label class="block text-xs font-600 text-slate-300 mb-1">Nova senha</label>
+          <input type="password" id="opt_senhaNova" placeholder="Mínimo 6 caracteres"
+            class="w-full px-3 py-2.5 pr-10 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+          <button type="button" onclick="optToggleVer('opt_senhaNova','opt_olho2')"
+            class="absolute right-3 bottom-2.5 text-slate-500 hover:text-slate-300 transition-colors">
+            <i id="opt_olho2" data-lucide="eye" style="width:15px;height:15px;"></i>
+          </button>
+        </div>
+        <div class="relative">
+          <label class="block text-xs font-600 text-slate-300 mb-1">Confirmar nova senha</label>
+          <input type="password" id="opt_senhaConfirm" placeholder="Repita a nova senha"
+            class="w-full px-3 py-2.5 pr-10 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all">
+          <button type="button" onclick="optToggleVer('opt_senhaConfirm','opt_olho3')"
+            class="absolute right-3 bottom-2.5 text-slate-500 hover:text-slate-300 transition-colors">
+            <i id="opt_olho3" data-lucide="eye" style="width:15px;height:15px;"></i>
+          </button>
+        </div>
+
+        <p id="opt_msgSenha" class="text-xs hidden"></p>
+        <button onclick="optAlterarSenha()"
+          class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-700 text-sm transition-all transform hover:scale-105">
+          Alterar senha
+        </button>
+      </div>
+
+      <!-- ── Tema ── -->
+      <div class="bg-slate-800/60 rounded-2xl border border-white/10 p-5">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5 mb-4">
+          <i data-lucide="sun-moon" style="width:16px;height:16px;" class="text-emerald-400"></i>
+          <h3 class="font-800 text-sm text-white">Tema</h3>
+        </div>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-600 text-white" id="opt_temaLabel">Modo escuro</p>
+            <p class="text-xs text-slate-400" id="opt_temaDesc">Toque para modo claro</p>
+          </div>
+          <div onclick="optToggleTema()" id="opt_temaPill"
+            style="width:68px;height:34px;border-radius:999px;padding:3px;display:flex;align-items:center;cursor:pointer;transition:background 0.25s;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);">
+            <span id="opt_temaDot"
+              style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.15);transition:transform 0.25s,background 0.25s;transform:translateX(0);">
+              <i id="opt_temaIcon" data-lucide="moon" style="width:14px;height:14px;color:#cbd5e1;"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /p-5 -->
+  </div><!-- /opcoesPanel -->
+
+  <script>
+    /* ── estilos modo claro ── */
+    const optEstiloClaro = `
+      body { background:#f1f5f9 !important; }
+      aside, header, nav.opt-bottomnav { background:#f8fafc !important; border-color:rgba(0,0,0,0.1) !important; }
+      .bg-slate-950 { background:#e2e8f0 !important; }
+      .bg-slate-900 { background:#ffffff !important; }
+      .bg-slate-800,.bg-slate-800\\/60 { background:#f1f5f9 !important; }
+      .bg-white\\/5 { background:rgba(0,0,0,0.04) !important; }
+      .bg-white\\/10 { background:rgba(0,0,0,0.06) !important; }
+      .border-white\\/10 { border-color:rgba(0,0,0,0.1) !important; }
+      .border-white\\/5 { border-color:rgba(0,0,0,0.06) !important; }
+      .text-white { color:#0f172a !important; }
+      .text-slate-100,.text-slate-200 { color:#1e293b !important; }
+      .text-slate-300 { color:#334155 !important; }
+      .text-slate-400 { color:#64748b !important; }
+      .text-slate-500,.text-slate-600 { color:#94a3b8 !important; }
+      input,select,textarea { color:#0f172a !important; background:rgba(0,0,0,0.04) !important; border-color:rgba(0,0,0,0.12) !important; }
+      input::placeholder,textarea::placeholder { color:#94a3b8 !important; }
+      #opcoesPanel { background:#ffffff !important; border-color:rgba(0,0,0,0.1) !important; }
+      #opcoesPanel .bg-slate-800\\/60 { background:rgba(0,0,0,0.03) !important; }
+    `;
+    let optStyleTag = null;
+    let optModoClaro = localStorage.getItem('acs_tema') === 'claro';
+
+    function optAplicarTema() {
+      const dot  = document.getElementById('opt_temaDot');
+      const icon = document.getElementById('opt_temaIcon');
+      const pill = document.getElementById('opt_temaPill');
+      const lbl  = document.getElementById('opt_temaLabel');
+      const desc = document.getElementById('opt_temaDesc');
+      if (optModoClaro) {
+        if (!document.getElementById('opt_style_claro')) {
+          optStyleTag = document.createElement('style');
+          optStyleTag.id = 'opt_style_claro';
+          optStyleTag.textContent = optEstiloClaro;
+          document.head.appendChild(optStyleTag);
+        }
+        dot.style.transform  = 'translateX(34px)';
+        dot.style.background = 'rgba(0,0,0,0.1)';
+        icon.setAttribute('data-lucide','sun'); icon.style.color='#334155';
+        pill.style.background    = 'rgba(0,0,0,0.06)';
+        pill.style.borderColor   = 'rgba(0,0,0,0.15)';
+        if(lbl)  lbl.textContent  = 'Modo claro';
+        if(desc) desc.textContent = 'Toque para modo escuro';
+      } else {
+        const t = document.getElementById('opt_style_claro');
+        if (t) t.remove(); optStyleTag = null;
+        dot.style.transform  = 'translateX(0)';
+        dot.style.background = 'rgba(255,255,255,0.15)';
+        icon.setAttribute('data-lucide','moon'); icon.style.color='#cbd5e1';
+        pill.style.background  = 'rgba(255,255,255,0.08)';
+        pill.style.borderColor = 'rgba(255,255,255,0.12)';
+        if(lbl)  lbl.textContent  = 'Modo escuro';
+        if(desc) desc.textContent = 'Toque para modo claro';
+      }
+      lucide.createIcons();
+    }
+    optAplicarTema();
+
+    function optToggleTema() {
+      optModoClaro = !optModoClaro;
+      localStorage.setItem('acs_tema', optModoClaro ? 'claro' : 'escuro');
+      optAplicarTema();
+    }
+
+    /* ── abrir / fechar painel ── */
+    function abrirOpcoes() {
+      // preenche campos com dados da sessão
+      if (sessaoAtiva) {
+        document.getElementById('opt_nome').value    = sessaoAtiva.name    || '';
+        document.getElementById('opt_phone').value   = sessaoAtiva.phone   || '';
+        document.getElementById('opt_email').value   = sessaoAtiva.email   || '';
+      }
+      ['opt_senhaAtual','opt_senhaNova','opt_senhaConfirm'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('opcoesOverlay').classList.remove('hidden');
+      setTimeout(() => document.getElementById('opcoesPanel').style.transform = 'translateX(0)', 10);
+      lucide.createIcons();
+    }
+
+    function fecharOpcoes() {
+      document.getElementById('opcoesPanel').style.transform = 'translateX(100%)';
+      setTimeout(() => document.getElementById('opcoesOverlay').classList.add('hidden'), 300);
+    }
+
+    /* ── intercepta cliques nos links #opcoes ── */
+    document.addEventListener('click', function(e) {
+      const a = e.target.closest('a[href="#opcoes"]');
+      if (a) { e.preventDefault(); abrirOpcoes(); }
+    });
+
+    /* ── máscara telefone ── */
+    function optMaskPhone(input) {
+      let v = input.value.replace(/\D/g,'').slice(0,11);
+      if(v.length>6)      v=`(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+      else if(v.length>2) v=`(${v.slice(0,2)}) ${v.slice(2)}`;
+      else if(v.length>0) v=`(${v}`;
+      input.value=v;
+    }
+
+    /* ── toggle ver senha ── */
+    function optToggleVer(inputId, iconId) {
+      const inp  = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      icon.setAttribute('data-lucide', inp.type === 'password' ? 'eye' : 'eye-off');
+      lucide.createIcons();
+    }
+
+    /* ── feedback ── */
+    function optMsg(elId, texto, ok) {
+      const el = document.getElementById(elId);
+      el.textContent = texto;
+      el.className = 'text-xs mt-1 ' + (ok ? 'text-emerald-400' : 'text-red-400');
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    /* ── salvar dados ── */
+    function optSalvarDados() {
+      const nome    = document.getElementById('opt_nome').value.trim();
+      const phone   = document.getElementById('opt_phone').value.trim();
+      const email   = document.getElementById('opt_email').value.trim();
+
+      if (nome.length < 15) { optMsg('opt_msgDados','O nome deve ter no mínimo 15 caracteres.',false); return; }
+      const phoneRegex = /^\(\d{2}\)\s\d{5}-\d{4}$/;
+      if (phone && !phoneRegex.test(phone)) { optMsg('opt_msgDados','Formato inválido: (XX) XXXXX-XXXX',false); return; }
+
+      sessaoAtiva.name = nome; sessaoAtiva.phone = phone;
+      sessaoAtiva.email = email;
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
+      if (idx !== -1) {
+        agentes[idx].name = nome; agentes[idx].phone = phone;
+        agentes[idx].email = email;
+        localStorage.setItem('agentes', JSON.stringify(agentes));
+      }
+      // atualiza nome na sidebar
+      const nomeEl = document.getElementById('nomeAcsSide');
+      if (nomeEl) nomeEl.innerText = nome;
+      optMsg('opt_msgDados','Dados atualizados com sucesso!', true);
+    }
+
+    /* ── alterar senha ── */
+    function optAlterarSenha() {
+      const atual    = document.getElementById('opt_senhaAtual').value;
+      const nova     = document.getElementById('opt_senhaNova').value;
+      const confirma = document.getElementById('opt_senhaConfirm').value;
+
+      if (atual !== sessaoAtiva.password) { optMsg('opt_msgSenha','Senha atual incorreta.',false); return; }
+      if (nova.length < 6) { optMsg('opt_msgSenha','A nova senha deve ter no mínimo 6 caracteres.',false); return; }
+      if (nova !== confirma) { optMsg('opt_msgSenha','As senhas não coincidem.',false); return; }
+
+      sessaoAtiva.password = nova;
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
+      if (idx !== -1) { agentes[idx].password = nova; localStorage.setItem('agentes', JSON.stringify(agentes)); }
+
+      ['opt_senhaAtual','opt_senhaNova','opt_senhaConfirm'].forEach(id => document.getElementById(id).value = '');
+      optMsg('opt_msgSenha','Senha alterada com sucesso!', true);
+    }
+  </script>
+
+  <nav class="opt-bottomnav md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-white/10 px-6 py-3 flex justify-between items-center z-50">
     <a href="#home" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
       <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
       <span class="text-[10px] font-600">Início</span>
@@ -310,6 +683,14 @@
     <a href="#visits" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
       <i data-lucide="home" style="width:18px;height:18px;"></i>
       <span class="text-[10px] font-600">Visitas</span>
+    </a>
+    <a href="#relatorios" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="file-bar-chart" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Relatórios</span>
+    </a>
+    <a href="#opcoes" class="mobile-nav-btn flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="settings" style="width:18px;height:18px;"></i>
+      <span class="text-[10px] font-600">Opções</span>
     </a>
   </nav>
 
@@ -636,9 +1017,9 @@
                 </p>
                 <div class="flex gap-2 mt-3">
                   <button onclick="editarFamilia('${fam.prontuario}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-700 bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-white/10 transition-all">
-                    <i data-lucide="edit" style="width:13px;height:13px;"></i> Editar Ficha
+                    <i data-lucide="pencil" style="width:13px;height:13px;"></i> Editar Ficha
                   </button>
-                  <button onclick="excluirFamilia('${fam.prontuario}', '${fam.responsavel}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-700 bg-white/5 hover:bg-red-500/20 text-slate-300 hover:text-red-400 border border-white/10 transition-all">
+                  <button onclick="excluirFamilia('${fam.prontuario}', '${fam.responsavel}')" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-700 bg-red-500/20 hover:bg-red-500/40 text-red-400 border border-red-500/30 transition-all">
                     <i data-lucide="trash-2" style="width:13px;height:13px;"></i> Excluir
                   </button>
                 </div>
@@ -646,6 +1027,13 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 ${fam.membros.map(m => {
                   let badgesSaude = '';
+                  if(m.nascimento) {
+                    const hoje = new Date();
+                    const nasc = new Date(m.nascimento);
+                    const idade = hoje.getFullYear() - nasc.getFullYear() - (hoje < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate()) ? 1 : 0);
+                    if(idade >= 60) badgesSaude += `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Idoso(a)</span> `;
+                    if(idade < 12) badgesSaude += `<span class="bg-pink-500/10 text-pink-400 border border-pink-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Criança</span> `;
+                  }
                   if(m.hipertenso) badgesSaude += `<span class="bg-red-500/10 text-red-400 border border-red-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Hipertensão</span> `;
                   if(m.diabetico) badgesSaude += `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Diabetes</span> `;
                   if(m.gestante) badgesSaude += `<span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Gestante</span> `;
@@ -655,6 +1043,11 @@
                       <div>
                         <p class="font-700 text-slate-200">${m.nome}</p>
                         <p class="text-[10px] text-slate-400 mt-0.5">SUS: ${m.sus} | CPF: ${m.cpf}</p>
+                        <p class="text-[10px] text-slate-400 mt-0.5 flex flex-wrap gap-x-2">
+                          ${m.nascimento ? `<span>Nasc.: ${m.nascimento.split('-').reverse().join('/')}</span>` : ''}
+                          ${m.sexo ? `<span>Sexo: ${m.sexo}</span>` : ''}
+                          ${m.telefone ? `<span>Tel.: ${m.telefone}</span>` : ''}
+                        </p>
                       </div>
                       ${badgesSaude ? `<div class="flex flex-wrap gap-1 pt-1 border-t border-white/5">${badgesSaude}</div>` : ''}
                     </div>
@@ -904,16 +1297,158 @@
       }
 
       document.getElementById('boasVindas').innerText = `Bem-vindo(a), ${sessaoAtiva.name}!`;
-      document.getElementById('infoUnidade').innerText = `Unidade: ${sessaoAtiva.unit} | Área: ${sessaoAtiva.area || 'Não informada'}`;
+      document.getElementById('infoUnidade').innerText = `Unidade: ${sessaoAtiva.unit} | Equipe: ${sessaoAtiva.team || 'Não informada'} | Área: ${sessaoAtiva.area || 'Não informada'}`;
       document.getElementById('nomeAcsSide').innerText = sessaoAtiva.name;
       document.getElementById('nomeUnidadeSide').innerText = sessaoAtiva.unit;
       
       document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
 
+      // Pré-seleciona mês e ano atual
+      const agora = new Date();
+      document.getElementById('relMes').value = String(agora.getMonth() + 1).padStart(2, '0');
+      document.getElementById('relAno').value = agora.getFullYear();
+
       showOnlyList();
       updateNavigation();
     });
+
+    function getVisitasDoMes(mes, ano) {
+      const todas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      return todas.filter(v => {
+        if (v.agenteLogin !== sessaoAtiva.login) return false;
+        const [y, m] = (v.data || '').split('-');
+        return m === mes && y === String(ano);
+      });
+    }
+
+    function previewRelatorioVisitas() {
+      const mes = document.getElementById('relMes').value;
+      const ano = document.getElementById('relAno').value;
+      const visitas = getVisitasDoMes(mes, ano);
+      const nomesMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+      document.getElementById('resumoVisitas').innerText = `${visitas.length} visita(s) em ${nomesMes[parseInt(mes)]}/${ano}`;
+      const lista = document.getElementById('listaPreviewVisitas');
+      if (visitas.length === 0) {
+        lista.innerHTML = '<p class="text-slate-500">Nenhuma visita encontrada neste período.</p>';
+      } else {
+        lista.innerHTML = visitas.map(v => `
+          <div class="flex justify-between gap-2 py-1 border-b border-white/5">
+            <span class="text-slate-300">${v.data ? v.data.split('-').reverse().join('/') : '—'} — Prontuário Nº ${v.prontuario}</span>
+            <span class="text-emerald-400 font-700">${v.desfecho || ''}</span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('previewVisitas').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function exportarVisitasXML() {
+      const mes = document.getElementById('relMes').value;
+      const ano = document.getElementById('relAno').value;
+      const visitas = getVisitasDoMes(mes, ano);
+      const nomesMes = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<relatorioVisitas>\n`;
+      xml += `  <agente>${sessaoAtiva.name}</agente>\n`;
+      xml += `  <login>${sessaoAtiva.login}</login>\n`;
+      xml += `  <unidade>${sessaoAtiva.unit}</unidade>\n`;
+      xml += `  <equipe>${sessaoAtiva.team || ''}</equipe>\n`;
+      xml += `  <area>${sessaoAtiva.area || ''}</area>\n`;
+      xml += `  <periodo>${nomesMes[parseInt(mes)]}/${ano}</periodo>\n`;
+      xml += `  <totalVisitas>${visitas.length}</totalVisitas>\n`;
+      xml += `  <visitas>\n`;
+      visitas.forEach(v => {
+        xml += `    <visita>\n`;
+        xml += `      <data>${v.data || ''}</data>\n`;
+        xml += `      <prontuario>${v.prontuario || ''}</prontuario>\n`;
+        xml += `      <motivo>${(v.motivo || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</motivo>\n`;
+        xml += `      <desfecho>${v.desfecho || ''}</desfecho>\n`;
+        xml += `      <notas>${(v.notas || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</notas>\n`;
+        xml += `    </visita>\n`;
+      });
+      xml += `  </visitas>\n`;
+      xml += `</relatorioVisitas>`;
+
+      baixarXML(xml, `visitas_${mes}_${ano}_${sessaoAtiva.login}.xml`);
+    }
+
+    function previewRelatorioFamilias() {
+      const familias = (JSON.parse(localStorage.getItem('familias')) || []).filter(f => f.agenteLogin === sessaoAtiva.login);
+      document.getElementById('resumoFamilias').innerText = `${familias.length} família(s) cadastrada(s)`;
+      const lista = document.getElementById('listaPreviewFamilias');
+      if (familias.length === 0) {
+        lista.innerHTML = '<p class="text-slate-500">Nenhuma família cadastrada.</p>';
+      } else {
+        lista.innerHTML = familias.map(f => `
+          <div class="flex justify-between gap-2 py-1 border-b border-white/5">
+            <span class="text-slate-300">Nº ${f.prontuario} — ${f.responsavel}</span>
+            <span class="text-blue-400 font-700">${(f.membros || []).length} membro(s)</span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('previewFamilias').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function exportarFamiliasXML() {
+      const familias = (JSON.parse(localStorage.getItem('familias')) || []).filter(f => f.agenteLogin === sessaoAtiva.login);
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<relatorioFamilias>\n`;
+      xml += `  <agente>${sessaoAtiva.name}</agente>\n`;
+      xml += `  <login>${sessaoAtiva.login}</login>\n`;
+      xml += `  <unidade>${sessaoAtiva.unit}</unidade>\n`;
+      xml += `  <equipe>${sessaoAtiva.team || ''}</equipe>\n`;
+      xml += `  <area>${sessaoAtiva.area || ''}</area>\n`;
+      xml += `  <totalFamilias>${familias.length}</totalFamilias>\n`;
+      xml += `  <familias>\n`;
+      familias.forEach(f => {
+        const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        xml += `    <familia>\n`;
+        xml += `      <prontuario>${f.prontuario || ''}</prontuario>\n`;
+        xml += `      <responsavel>${esc(f.responsavel)}</responsavel>\n`;
+        xml += `      <logradouro>${esc(f.logradouro)}</logradouro>\n`;
+        xml += `      <numero>${f.numCasa || ''}</numero>\n`;
+        xml += `      <complemento>${esc(f.complemento)}</complemento>\n`;
+        xml += `      <bairro>${esc(f.bairro)}</bairro>\n`;
+        xml += `      <cidade>${esc(f.cidade)}</cidade>\n`;
+        xml += `      <uf>${f.uf || ''}</uf>\n`;
+        xml += `      <membros>\n`;
+        (f.membros || []).forEach(m => {
+          xml += `        <membro>\n`;
+          xml += `          <nome>${esc(m.nome)}</nome>\n`;
+          xml += `          <nascimento>${m.nascimento || ''}</nascimento>\n`;
+          xml += `          <sexo>${m.sexo || ''}</sexo>\n`;
+          xml += `          <cpf>${m.cpf || ''}</cpf>\n`;
+          xml += `          <sus>${m.sus || ''}</sus>\n`;
+          xml += `          <telefone>${m.telefone || ''}</telefone>\n`;
+          xml += `          <hipertenso>${m.hipertenso ? 'sim' : 'nao'}</hipertenso>\n`;
+          xml += `          <diabetico>${m.diabetico ? 'sim' : 'nao'}</diabetico>\n`;
+          xml += `          <gestante>${m.gestante ? 'sim' : 'nao'}</gestante>\n`;
+          xml += `          <vacinaAtrasada>${m.vacinaAtrasada ? 'sim' : 'nao'}</vacinaAtrasada>\n`;
+          xml += `        </membro>\n`;
+        });
+        xml += `      </membros>\n`;
+        xml += `    </familia>\n`;
+      });
+      xml += `  </familias>\n`;
+      xml += `</relatorioFamilias>`;
+
+      baixarXML(xml, `familias_${sessaoAtiva.login}.xml`);
+    }
+
+    function baixarXML(conteudo, nomeArquivo) {
+      const blob = new Blob([conteudo], { type: 'application/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = nomeArquivo;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   </script>
 </body>
 </html>
