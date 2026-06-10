@@ -209,11 +209,15 @@
             <div class="space-y-4">
               <div class="flex items-center justify-between">
                 <h4 class="text-xs font-800 text-emerald-400 uppercase tracking-wider">2. Componentes / Membros da Família</h4>
-                <button type="button" onclick="addMemberRow()" class="bg-white/5 hover:bg-white/10 text-emerald-400 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-700 transition-colors flex items-center gap-1.5">
+              </div>
+              
+              <div id="membrosContainer" class="space-y-4"></div>
+              
+              <div class="flex justify-start pt-2">
+                <button type="button" onclick="addMemberRow()" class="bg-white/5 hover:bg-white/10 text-emerald-400 border border-emerald-500/30 px-4 py-2.5 rounded-xl text-xs font-700 transition-colors flex items-center gap-1.5 shadow-sm">
                   <i data-lucide="user-plus" style="width:14px;height:14px;"></i> Adicionar Membro
                 </button>
               </div>
-              <div id="membrosContainer" class="space-y-4"></div>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
@@ -347,7 +351,6 @@
       }
     }
 
-    // CONTROLADORES DE EXCLUSIVIDADE DE TELA (LISTA vs CADASTRO)
     function showOnlyList() {
       document.getElementById('familyFormContainer').classList.add('hidden');
       document.getElementById('familyListHeader').classList.remove('hidden');
@@ -377,7 +380,7 @@
       document.getElementById("cepStatus").innerText = "Buscar automático";
       document.getElementById("cepStatus").className = "text-[10px] font-700 text-slate-500 italic";
       
-      showOnlyForm(); // Força sumir a lista e aparecer só o form
+      showOnlyForm();
       atualizarPreviaProntuario();
       resetMembrosForm();
       lucide.createIcons();
@@ -590,7 +593,7 @@
       
       familia.membros.forEach(membro => addMemberRow(membro));
 
-      showOnlyForm(); // Oculta a listagem para focar na edição
+      showOnlyForm();
       document.getElementById('familyFormContainer').scrollIntoView({ behavior: 'smooth' });
       lucide.createIcons();
     }
@@ -700,40 +703,32 @@
         const index = familiasGerais.findIndex(f => f.prontuario === editProntuarioId);
         if (index !== -1) {
           familiasGerais[index] = { ...familiasGerais[index], responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados };
-          alert('Ficha territorial updated com sucesso!');
+          alert('Ficha territorial atualizada com sucesso!');
         }
       } else {
         const prontuarioGerado = calcularProximoProntuario();
         familiasGerais.push({ agenteLogin: sessaoAtiva.login, prontuario: prontuarioGerado, responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados });
         
-        // --- CORREÇÃO DE COMPUTAÇÃO GLOBAL PARA A GERÊNCIA ---
-        // 1. Descobrir a quantidade real de famílias do agente após a inserção
         const totalFamiliasDoAgente = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login).length;
         
-        // 2. Atualizar a variável de sessão ativa e a interface local
         sessaoAtiva.familias = totalFamiliasDoAgente;
         localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
         document.getElementById('acsFamilias').innerText = totalFamiliasDoAgente;
 
-        // 3. Atualizar o array de agentes globais (Lido pela gerencia.html)
         const agentesGerais = JSON.parse(localStorage.getItem('agentes')) || [];
         const idx = agentesGerais.findIndex(a => a.login === sessaoAtiva.login);
         if (idx !== -1) {
           agentesGerais[idx].familias = totalFamiliasDoAgente;
           localStorage.setItem('agentes', JSON.stringify(agentesGerais));
         }
-        // -----------------------------------------------------
 
         alert(`Ficha territorial cadastrada!\nProntuário: ${prontuarioGerado}`);
       }
 
       localStorage.setItem('familias', JSON.stringify(familiasGerais));
-      showOnlyList(); // Após salvar, volta direto para a listagem limpa
+      showOnlyList();
     }
 
-    /* ==========================================================================
-       LÓGICA DO MÓDULO DE VISITAS DOMICILIARES
-       ========================================================================== */
     function carregarPainelVisitas() {
       const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
       const minhasFamilias = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login);
@@ -916,7 +911,7 @@
       document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
 
-      showOnlyList(); // Garante inicialização limpa apenas na listagem
+      showOnlyList();
       updateNavigation();
     });
   </script>
