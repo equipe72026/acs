@@ -700,11 +700,30 @@
         const index = familiasGerais.findIndex(f => f.prontuario === editProntuarioId);
         if (index !== -1) {
           familiasGerais[index] = { ...familiasGerais[index], responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados };
-          alert('Ficha territorial atualizada com sucesso!');
+          alert('Ficha territorial updated com sucesso!');
         }
       } else {
         const prontuarioGerado = calcularProximoProntuario();
         familiasGerais.push({ agenteLogin: sessaoAtiva.login, prontuario: prontuarioGerado, responsavel, cep, logradouro, numCasa, complemento, bairro, cidade, uf, membros: membrosColetados });
+        
+        // --- CORREÇÃO DE COMPUTAÇÃO GLOBAL PARA A GERÊNCIA ---
+        // 1. Descobrir a quantidade real de famílias do agente após a inserção
+        const totalFamiliasDoAgente = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login).length;
+        
+        // 2. Atualizar a variável de sessão ativa e a interface local
+        sessaoAtiva.familias = totalFamiliasDoAgente;
+        localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+        document.getElementById('acsFamilias').innerText = totalFamiliasDoAgente;
+
+        // 3. Atualizar o array de agentes globais (Lido pela gerencia.html)
+        const agentesGerais = JSON.parse(localStorage.getItem('agentes')) || [];
+        const idx = agentesGerais.findIndex(a => a.login === sessaoAtiva.login);
+        if (idx !== -1) {
+          agentesGerais[idx].familias = totalFamiliasDoAgente;
+          localStorage.setItem('agentes', JSON.stringify(agentesGerais));
+        }
+        // -----------------------------------------------------
+
         alert(`Ficha territorial cadastrada!\nProntuário: ${prontuarioGerado}`);
       }
 
