@@ -46,14 +46,9 @@
         Relatórios
       </button>
 
-      <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
-        <i id="theme-icon-desktop" data-lucide="moon" style="width:18px;height:18px;"></i>
-        <span id="theme-text-desktop">Modo Claro</span>
-      </button>
-
-      <button onclick="abrirModalSenha()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
-        <i data-lucide="key-round" style="width:18px;height:18px;"></i>
-        Alterar Senha
+      <button onclick="abrirOpcoes()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i data-lucide="settings" style="width:18px;height:18px;"></i>
+        Opções
       </button>
     </nav>
 
@@ -81,14 +76,9 @@
       <span class="text-[10px]">Relatórios</span>
     </button>
 
-    <button onclick="toggleDarkMode()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
-      <i id="theme-icon-mobile" data-lucide="moon" style="width:20px;height:20px;"></i>
-      <span class="text-[10px]">Tema</span>
-    </button>
-
-    <button onclick="abrirModalSenha()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
-      <i data-lucide="key-round" style="width:20px;height:20px;"></i>
-      <span class="text-[10px]">Senha</span>
+    <button onclick="abrirOpcoes()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+      <i data-lucide="settings" style="width:20px;height:20px;"></i>
+      <span class="text-[10px]">Opções</span>
     </button>
     <a href="index.html" class="flex flex-col items-center gap-1 text-red-500 dark:text-red-400">
       <i data-lucide="log-out" style="width:20px;height:20px;"></i>
@@ -236,6 +226,53 @@
     </div>
   </div>
 
+  <!-- Modal Opções -->
+  <div id="modalOpcoes" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-slate-100 dark:bg-white/5 rounded-xl flex items-center justify-center">
+            <i data-lucide="settings" style="width:18px;height:18px;" class="text-slate-600 dark:text-slate-400"></i>
+          </div>
+          <h3 class="text-lg font-800 text-slate-900 dark:text-white">Opções</h3>
+        </div>
+        <button onclick="fecharOpcoes()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Tema -->
+      <div class="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i id="theme-icon-opcoes" data-lucide="moon" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
+          <div>
+            <p class="text-sm font-700 text-slate-800 dark:text-white">Tema</p>
+            <p id="theme-text-opcoes" class="text-xs text-slate-500 dark:text-slate-400">Modo Escuro ativo</p>
+          </div>
+        </div>
+        <button onclick="toggleDarkMode()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-700 text-xs transition-colors">
+          Alternar
+        </button>
+      </div>
+
+      <!-- Alterar Senha -->
+      <div class="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i data-lucide="key-round" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
+          <div>
+            <p class="text-sm font-700 text-slate-800 dark:text-white">Senha de Acesso</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Alterar senha do gerente</p>
+          </div>
+        </div>
+        <button onclick="fecharOpcoes(); abrirModalSenha()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs transition-colors">
+          Alterar
+        </button>
+      </div>
+
+      <button onclick="fecharOpcoes()" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-600 text-sm transition-colors">Fechar</button>
+    </div>
+  </div>
+
   <!-- Modal para Alterar Senha -->
   <div id="modalSenha" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-100 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full space-y-4 shadow-xl">
@@ -261,22 +298,28 @@
   <script>
     function aplicarTema(tema) {
       const html = document.documentElement;
-      const iconDesktop = document.getElementById('theme-icon-desktop');
-      const textDesktop = document.getElementById('theme-text-desktop');
-      const iconMobile = document.getElementById('theme-icon-mobile');
+      const iconOpcoes = document.getElementById('theme-icon-opcoes');
+      const textOpcoes = document.getElementById('theme-text-opcoes');
 
       if (tema === 'dark') {
         html.classList.add('dark');
-        iconDesktop.setAttribute('data-lucide', 'sun');
-        textDesktop.innerText = 'Modo Claro';
-        iconMobile.setAttribute('data-lucide', 'sun');
+        if (iconOpcoes) iconOpcoes.setAttribute('data-lucide', 'sun');
+        if (textOpcoes) textOpcoes.innerText = 'Modo Escuro ativo';
       } else {
         html.classList.remove('dark');
-        iconDesktop.setAttribute('data-lucide', 'moon');
-        textDesktop.innerText = 'Modo Escuro';
-        iconMobile.setAttribute('data-lucide', 'moon');
+        if (iconOpcoes) iconOpcoes.setAttribute('data-lucide', 'moon');
+        if (textOpcoes) textOpcoes.innerText = 'Modo Claro ativo';
       }
       lucide.createIcons();
+    }
+
+    function abrirOpcoes() {
+      document.getElementById('modalOpcoes').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharOpcoes() {
+      document.getElementById('modalOpcoes').classList.add('hidden');
     }
 
     function toggleDarkMode() {
