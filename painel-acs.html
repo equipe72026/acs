@@ -13,11 +13,50 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
     
+    /* Toggle Switch — corrigido */
+    .toggle-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle-checkbox {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      cursor: pointer;
+      z-index: 1;
+    }
+    .toggle-label {
+      display: block;
+      width: 36px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      transition: background 0.2s;
+      position: relative;
+      pointer-events: none;
+    }
+    .toggle-dot {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
     .toggle-checkbox:checked + .toggle-label {
       background-color: #10b981;
     }
     .toggle-checkbox:checked + .toggle-label .toggle-dot {
-      transform: translateX(100%);
+      transform: translateX(16px);
     }
   </style>
 </head>
@@ -84,7 +123,7 @@
           <p class="text-slate-400 text-sm mt-1" id="infoUnidade">Carregando unidade...</p>
         </div>
         
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <a href="#families" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-blue-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
             <div class="flex items-center justify-between mb-3">
               <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
@@ -103,6 +142,17 @@
             <p class="text-3xl font-800 text-white" id="acsConsultas">0</p>
             <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Consultas</p>
           </div>
+
+          <a href="#visits" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-red-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
+                <i data-lucide="clock" class="text-red-400"></i>
+              </div>
+              <i data-lucide="chevron-right" class="text-slate-600 group-hover:text-red-400 transition-colors" style="width:16px;height:16px;"></i>
+            </div>
+            <p class="text-3xl font-800 text-white" id="acsVisitasPendentes">0</p>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Pendentes</p>
+          </a>
           
           <a href="#visits" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-emerald-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
             <div class="flex items-center justify-between mb-3">
@@ -876,38 +926,51 @@
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
               <span class="text-xs font-600 text-slate-300">Hipertenso</span>
-              <div class="relative inline-block w-8 mr-2 select-none">
-                <input type="checkbox" id="hip_${mContador}" class="m-hipertenso toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
-                <label for="hip_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
-                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
-                </label>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="hip_${mContador}" class="m-hipertenso toggle-checkbox"/>
+                <label for="hip_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
               </div>
             </div>
             <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
               <span class="text-xs font-600 text-slate-300">Diabético</span>
-              <div class="relative inline-block w-8 mr-2 select-none">
-                <input type="checkbox" id="diab_${mContador}" class="m-diabetico toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
-                <label for="diab_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
-                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
-                </label>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="diab_${mContador}" class="m-diabetico toggle-checkbox"/>
+                <label for="diab_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
               </div>
             </div>
             <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
               <span class="text-xs font-600 text-slate-300">Gestante</span>
-              <div class="relative inline-block w-8 mr-2 select-none">
-                <input type="checkbox" id="gest_${mContador}" class="m-gestante toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
-                <label for="gest_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
-                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
-                </label>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="gest_${mContador}" class="m-gestante toggle-checkbox"/>
+                <label for="gest_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
               </div>
             </div>
             <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
               <span class="text-xs font-600 text-slate-300">Vacina Atrasada</span>
-              <div class="relative inline-block w-8 mr-2 select-none">
-                <input type="checkbox" id="vac_${mContador}" class="m-vacina toggle-checkbox absolute block w-4 h-4 rounded-full bg-slate-300 border-4 border-transparent appearance-none cursor-pointer"/>
-                <label for="vac_${mContador}" class="toggle-label block overflow-hidden h-4 rounded-full bg-white/10 cursor-pointer">
-                  <span class="toggle-dot block w-4 h-4 rounded-full bg-white shadow"></span>
-                </label>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="vac_${mContador}" class="m-vacina toggle-checkbox"/>
+                <label for="vac_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Tuberculose</span>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="tub_${mContador}" class="m-tuberculose toggle-checkbox"/>
+                <label for="tub_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Hanseníase</span>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="han_${mContador}" class="m-hanseniase toggle-checkbox"/>
+                <label for="han_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-slate-950 p-2 rounded-lg border border-white/5">
+              <span class="text-xs font-600 text-slate-300">Deficiente Físico</span>
+              <div class="toggle-wrap">
+                <input type="checkbox" id="def_${mContador}" class="m-deficiente toggle-checkbox"/>
+                <label for="def_${mContador}" class="toggle-label"><span class="toggle-dot"></span></label>
               </div>
             </div>
           </div>
@@ -926,6 +989,9 @@
         card.querySelector('.m-diabetico').checked = !!data.diabetico;
         card.querySelector('.m-gestante').checked = !!data.gestante;
         card.querySelector('.m-vacina').checked = !!data.vacinaAtrasada;
+        card.querySelector('.m-tuberculose').checked = !!data.tuberculose;
+        card.querySelector('.m-hanseniase').checked = !!data.hanseniase;
+        card.querySelector('.m-deficiente').checked = !!data.deficienteFisico;
       }
       lucide.createIcons();
     }
@@ -1038,6 +1104,9 @@
                   if(m.diabetico) badgesSaude += `<span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Diabetes</span> `;
                   if(m.gestante) badgesSaude += `<span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Gestante</span> `;
                   if(m.vacinaAtrasada) badgesSaude += `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Vacina de risco</span>`;
+                  if(m.tuberculose) badgesSaude += ` <span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Tuberculose</span>`;
+                  if(m.hanseniase) badgesSaude += ` <span class="bg-teal-500/10 text-teal-400 border border-teal-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Hanseníase</span>`;
+                  if(m.deficienteFisico) badgesSaude += ` <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-1.5 py-0.5 rounded text-[9px] font-700">Def. Físico</span>`;
                   return `
                     <div class="bg-white/[0.02] border border-white/5 p-3 rounded-lg text-xs flex flex-col justify-between space-y-2">
                       <div>
@@ -1088,7 +1157,10 @@
           hipertenso: item.querySelector('.m-hipertenso').checked,
           diabetico: item.querySelector('.m-diabetico').checked,
           gestante: item.querySelector('.m-gestante').checked,
-          vacinaAtrasada: item.querySelector('.m-vacina').checked
+          vacinaAtrasada: item.querySelector('.m-vacina').checked,
+          tuberculose: item.querySelector('.m-tuberculose').checked,
+          hanseniase: item.querySelector('.m-hanseniase').checked,
+          deficienteFisico: item.querySelector('.m-deficiente').checked
         });
       }
 
@@ -1119,7 +1191,16 @@
       }
 
       localStorage.setItem('familias', JSON.stringify(familiasGerais));
+      calcularVisitasPendentes();
       showOnlyList();
+    }
+
+    function calcularVisitasPendentes() {
+      const familias = (JSON.parse(localStorage.getItem('familias')) || []).filter(f => f.agenteLogin === sessaoAtiva.login);
+      const visitas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
+      const pendentes = familias.filter(f => !visitas.some(v => v.prontuario === f.prontuario)).length;
+      document.getElementById('acsVisitasPendentes').innerText = pendentes;
+      return pendentes;
     }
 
     function carregarPainelVisitas() {
@@ -1248,6 +1329,7 @@
 
       alert('Relatório de Visita Domiciliar salvo com sucesso!');
       closeVisitForm();
+      calcularVisitasPendentes();
       carregarPainelVisitas();
     }
 
@@ -1268,6 +1350,7 @@
       const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
       const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
       if (idx !== -1) { agentes[idx].familias = minhasFamilias.length; localStorage.setItem('agentes', JSON.stringify(agentes)); }
+      calcularVisitasPendentes();
       carregarFamilias();
     }
 
@@ -1285,6 +1368,7 @@
       const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
       const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
       if (idx !== -1) { agentes[idx].visitas = sessaoAtiva.visitas; localStorage.setItem('agentes', JSON.stringify(agentes)); }
+      calcularVisitasPendentes();
       carregarPainelVisitas();
     }
 
@@ -1303,6 +1387,7 @@
       
       document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
+      calcularVisitasPendentes();
 
       // Pré-seleciona mês e ano atual
       const agora = new Date();
@@ -1429,6 +1514,9 @@
           xml += `          <diabetico>${m.diabetico ? 'sim' : 'nao'}</diabetico>\n`;
           xml += `          <gestante>${m.gestante ? 'sim' : 'nao'}</gestante>\n`;
           xml += `          <vacinaAtrasada>${m.vacinaAtrasada ? 'sim' : 'nao'}</vacinaAtrasada>\n`;
+          xml += `          <tuberculose>${m.tuberculose ? 'sim' : 'nao'}</tuberculose>\n`;
+          xml += `          <hanseniase>${m.hanseniase ? 'sim' : 'nao'}</hanseniase>\n`;
+          xml += `          <deficienteFisico>${m.deficienteFisico ? 'sim' : 'nao'}</deficienteFisico>\n`;
           xml += `        </membro>\n`;
         });
         xml += `      </membros>\n`;
