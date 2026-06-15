@@ -143,7 +143,7 @@
             <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Consultas</p>
           </div>
 
-          <a href="#visits" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-red-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
+          <button onclick="abrirVisitasPendentes()" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-red-500/50 hover:bg-slate-800 transition-all cursor-pointer block group w-full text-left">
             <div class="flex items-center justify-between mb-3">
               <div class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
                 <i data-lucide="clock" class="text-red-400"></i>
@@ -152,7 +152,7 @@
             </div>
             <p class="text-3xl font-800 text-white" id="acsVisitasPendentes">0</p>
             <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Visitas Pendentes</p>
-          </a>
+          </button>
           
           <a href="#visits" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-emerald-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
             <div class="flex items-center justify-between mb-3">
@@ -294,9 +294,19 @@
       </section>
 
       <section id="visits" class="content-section hidden space-y-6">
-        <div>
-          <h2 class="text-2xl font-800 text-white tracking-tight">Controle de Visitas Domiciliares</h2>
-          <p class="text-slate-400 text-sm mt-1">Gerencie relatórios e realize o mapeamento das visitas territoriais da sua microárea.</p>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-800 text-white tracking-tight" id="visitsTitulo">Controle de Visitas Domiciliares</h2>
+            <p class="text-slate-400 text-sm mt-1" id="visitsSubtitulo">Gerencie relatórios e realize o mapeamento das visitas territoriais da sua microárea.</p>
+          </div>
+          <div class="flex gap-2 self-start sm:self-auto flex-shrink-0">
+            <button id="btnFiltroTodas" onclick="verTodasVisitas()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-emerald-600 border-emerald-600 text-white">
+              <i data-lucide="list" style="width:14px;height:14px;"></i> Todas as visitas
+            </button>
+            <button id="btnFiltroPendentes" onclick="abrirVisitasPendentes()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+              <i data-lucide="clock" style="width:14px;height:14px;"></i> Ver pendentes
+            </button>
+          </div>
         </div>
 
         <div id="visitFormContainer" class="bg-slate-900 rounded-2xl border border-white/10 p-6 hidden space-y-4">
@@ -796,6 +806,27 @@
     }
 
     let _abrindoCadastro = false;
+    let _filtroSoPendentes = false;
+
+    function abrirVisitasPendentes() {
+      _filtroSoPendentes = true;
+      if (window.location.hash === '#visits') {
+        carregarPainelVisitas();
+      } else {
+        window.location.hash = '#visits';
+      }
+    }
+
+    function verTodasVisitas() {
+      _filtroSoPendentes = false;
+      carregarPainelVisitas();
+    }
+
+    // Reseta filtro ao navegar para visitas pelos links normais de menu
+    document.addEventListener('click', function(e) {
+      const a = e.target.closest('a[href="#visits"]');
+      if (a) { _filtroSoPendentes = false; }
+    });
 
     function openFamilyRegistration() {
       _abrindoCadastro = true;
@@ -1208,6 +1239,28 @@
       const minhasFamilias = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login);
       const visitasGerais = JSON.parse(localStorage.getItem('visitas_historico')) || [];
       
+      // Atualizar cabeçalho e botões conforme filtro
+      const titulo = document.getElementById('visitsTitulo');
+      const subtitulo = document.getElementById('visitsSubtitulo');
+      const btnTodas = document.getElementById('btnFiltroTodas');
+      const btnPendentes = document.getElementById('btnFiltroPendentes');
+      if (_filtroSoPendentes) {
+        titulo.innerText = 'Visitas Pendentes';
+        subtitulo.innerText = 'Famílias que ainda não receberam nenhuma visita registrada.';
+        btnPendentes.className = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-red-600 border-red-600 text-white';
+        btnTodas.className = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10';
+      } else {
+        titulo.innerText = 'Controle de Visitas Domiciliares';
+        subtitulo.innerText = 'Gerencie relatórios e realize o mapeamento das visitas territoriais da sua microárea.';
+        btnTodas.className = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-emerald-600 border-emerald-600 text-white';
+        btnPendentes.className = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10';
+      }
+
+      // Aplicar filtro de pendentes se necessário
+      const familiasFiltradas = _filtroSoPendentes
+        ? minhasFamilias.filter(f => !visitasGerais.some(v => v.prontuario === f.prontuario))
+        : minhasFamilias;
+
       const container = document.getElementById('listaVisitasFamilias');
       
       if(minhasFamilias.length === 0) {
@@ -1220,7 +1273,20 @@
       }
 
       container.innerHTML = '';
-      minhasFamilias.forEach(fam => {
+
+      if(familiasFiltradas.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
+            <i data-lucide="check-circle-2" class="text-emerald-400 mx-auto mb-2" style="width:28px;height:28px;"></i>
+            <p class="font-700 text-white text-sm">Nenhuma visita pendente!</p>
+            <p class="text-xs mt-1">Todas as famílias já possuem visita registrada.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      familiasFiltradas.forEach(fam => {
         const visitasDaFamilia = visitasGerais.filter(v => v.prontuario === fam.prontuario);
         
         let statusBadge = '';
