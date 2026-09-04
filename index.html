@@ -276,16 +276,23 @@
     const usuarioDigitado = document.getElementById('usuarioGerencial').value.trim();
     const senhaDigitada = document.getElementById('senhaGerencial').value;
 
-    // Conta de acesso total ao painel gerencial.
-    const loginGerencia = usuarioDigitado === 'gerente' && senhaDigitada === '123';
-
-    // Conta "admin": senha pode ter sido alterada via Opções > Senha de Acesso (fica salva no LocalStorage).
-    // Acesso restrito: apenas visualização dos cadastros e edição da senha dos agentes.
-    const senhaAdminValida = localStorage.getItem('senhaGerente') || '123';
+    // Conta "admin": acesso master (total) ao painel gerencial.
+    // Senha pode ter sido alterada via Opções > Senha de Acesso (fica salva no LocalStorage).
+    const senhaAdminValida = localStorage.getItem('senhaAdmin') || '123';
     const loginAdmin = usuarioDigitado === 'admin' && senhaDigitada === senhaAdminValida;
 
-    if (loginGerencia || loginAdmin) {
-      const sessao = { usuario: usuarioDigitado, tipo: loginGerencia ? 'gerencia' : 'admin' };
+    // Conta "gerente": cadastrada pelo admin em Opções > Gerentes (fica salva no LocalStorage).
+    // Acesso total ao painel, exceto a permissão de cadastrar novos gerentes (exclusiva do admin).
+    let gerentes = [];
+    try {
+      gerentes = JSON.parse(localStorage.getItem('gerentes')) || [];
+    } catch (e) {
+      gerentes = [];
+    }
+    const loginGerente = gerentes.some(g => g.login === usuarioDigitado && g.senha === senhaDigitada);
+
+    if (loginAdmin || loginGerente) {
+      const sessao = { usuario: usuarioDigitado, tipo: loginAdmin ? 'admin' : 'gerente' };
       localStorage.setItem('gerencia_sessao', JSON.stringify(sessao));
       window.location.href = 'gerencia.html';
     } else {

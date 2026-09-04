@@ -38,7 +38,7 @@
         <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i>
         Estatísticas
       </a>
-      <button onclick="abrirCadastro()" class="acesso-total w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+      <button onclick="abrirCadastro()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
         <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
         Cadastrar Agente
       </button>
@@ -48,7 +48,7 @@
         Relatórios
       </button>
 
-      <button onclick="abrirLogs()" class="so-master w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+      <button onclick="abrirLogs()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
         <i data-lucide="scroll-text" style="width:18px;height:18px;"></i>
         Logs de Autenticação
       </button>
@@ -73,7 +73,7 @@
       <i data-lucide="bar-chart-3" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Estatísticas</span>
     </a>
-    <button onclick="abrirCadastro()" class="acesso-total flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+    <button onclick="abrirCadastro()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
       <i data-lucide="user-plus" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Cadastrar</span>
     </button>
@@ -83,7 +83,7 @@
       <span class="text-[10px]">Relatórios</span>
     </button>
 
-    <button onclick="abrirLogs()" class="so-master flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+    <button onclick="abrirLogs()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
       <i data-lucide="scroll-text" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Logs</span>
     </button>
@@ -104,12 +104,8 @@
       <div>
         <h1 class="text-2xl md:text-3xl font-800 text-slate-900 dark:text-white tracking-tight">Painel de Controle</h1>
         <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Estatísticas em tempo real baseadas no localStorage.</p>
-        <p id="badgeSessao" class="hidden mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] font-700 uppercase tracking-wide">
-          <i data-lucide="eye" style="width:12px;height:12px;"></i>
-          Modo Visualização
-        </p>
       </div>
-      <button onclick="abrirCadastro()" class="acesso-total inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
+      <button onclick="abrirCadastro()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
         <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
         Cadastrar Novo Agente
       </button>
@@ -418,7 +414,7 @@
     </div>
   </div>
 
-  <!-- Modal Logs de Autenticação (acesso restrito - login gerencia/Master) -->
+  <!-- Modal Logs de Autenticação (visível para admin e gerente) -->
   <div id="modalLogs" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 w-full max-w-3xl shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
 
@@ -506,7 +502,7 @@
       </div>
 
       <!-- Alterar Senha -->
-      <div class="acesso-total bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+      <div class="so-admin bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <i data-lucide="key-round" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
           <div>
@@ -516,6 +512,20 @@
         </div>
         <button onclick="fecharOpcoes(); abrirModalSenha()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs transition-colors">
           Alterar
+        </button>
+      </div>
+
+      <!-- Cadastro de Gerentes (exclusivo do admin) -->
+      <div class="so-admin bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i data-lucide="user-cog" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
+          <div>
+            <p class="text-sm font-700 text-slate-800 dark:text-white">Gerentes</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cadastrar novos gerentes (acesso total, exceto este cadastro)</p>
+          </div>
+        </div>
+        <button onclick="fecharOpcoes(); abrirGerentes()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs transition-colors">
+          Gerenciar
         </button>
       </div>
 
@@ -545,7 +555,39 @@
     </div>
   </div>
 
-  <!-- Modal Alterar Senha do Agente (acesso restrito - login admin) -->
+  <!-- Modal Gerentes (cadastro exclusivo do admin) -->
+  <div id="modalGerentes" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-100 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-md w-full space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-800 text-slate-900 dark:text-white">Gerentes</h3>
+        <button onclick="fecharGerentes()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Gerentes cadastrados têm acesso total ao painel, exceto a permissão de cadastrar novos gerentes — isso é exclusivo do admin.</p>
+
+      <div id="listaGerentes" class="space-y-2"></div>
+
+      <div class="border-t border-slate-200 dark:border-white/10 pt-4 space-y-3">
+        <p class="text-sm font-700 text-slate-800 dark:text-white">Cadastrar novo gerente</p>
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nome</label>
+          <input type="text" id="nomeGerente" placeholder="Nome do gerente" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Usuário</label>
+          <input type="text" id="loginGerente" placeholder="Ex: joao.gerente" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Senha</label>
+          <input type="password" id="senhaGerenteNovo" placeholder="Mínimo 4 caracteres" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+        <button onclick="cadastrarGerente()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Cadastrar Gerente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Alterar Senha do Agente (ação rápida, disponível para admin/gerente) -->
   <div id="modalSenhaAgente" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full space-y-4 shadow-xl">
       <div class="flex items-center gap-3">
@@ -614,14 +656,8 @@
         return false;
       }
 
-      if (sessaoGerencial.tipo === 'admin') {
-        document.querySelectorAll('.acesso-total').forEach(el => el.classList.add('hidden'));
-        const badge = document.getElementById('badgeSessao');
-        if (badge) badge.classList.remove('hidden');
-      }
-
-      if (sessaoGerencial.tipo !== 'gerencia') {
-        document.querySelectorAll('.so-master').forEach(el => el.classList.add('hidden'));
+      if (sessaoGerencial.tipo !== 'admin') {
+        document.querySelectorAll('.so-admin').forEach(el => el.classList.add('hidden'));
       }
       return true;
     }
@@ -682,9 +718,96 @@
         return;
       }
 
-      localStorage.setItem('senhaGerente', novaSenha);
-      mostrarToast('Senha do gerenciador alterada com sucesso!', 'success');
+      localStorage.setItem('senhaAdmin', novaSenha);
+      mostrarToast('Senha do login "admin" alterada com sucesso!', 'success');
       fecharModalSenha();
+    }
+
+    // ── Gerentes (cadastro exclusivo do admin) ──
+    function abrirGerentes() {
+      renderizarGerentes();
+      document.getElementById('nomeGerente').value = '';
+      document.getElementById('loginGerente').value = '';
+      document.getElementById('senhaGerenteNovo').value = '';
+      document.getElementById('modalGerentes').classList.remove('hidden');
+    }
+
+    function fecharGerentes() {
+      document.getElementById('modalGerentes').classList.add('hidden');
+    }
+
+    function obterGerentes() {
+      try {
+        return JSON.parse(localStorage.getItem('gerentes')) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function renderizarGerentes() {
+      const gerentes = obterGerentes();
+      const lista = document.getElementById('listaGerentes');
+
+      if (gerentes.length === 0) {
+        lista.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 italic text-center py-2">Nenhum gerente cadastrado.</p>';
+      } else {
+        lista.innerHTML = gerentes.map((g, i) => `
+          <div class="flex items-center justify-between bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2.5">
+            <div>
+              <p class="text-sm font-700 text-slate-800 dark:text-white">${g.nome || g.login}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Usuário: ${g.login}</p>
+            </div>
+            <button onclick="removerGerente(${i})" class="text-red-500 hover:text-red-600 transition-colors">
+              <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+            </button>
+          </div>
+        `).join('');
+      }
+      lucide.createIcons();
+    }
+
+    function cadastrarGerente() {
+      const nome = document.getElementById('nomeGerente').value.trim();
+      const login = document.getElementById('loginGerente').value.trim();
+      const senha = document.getElementById('senhaGerenteNovo').value;
+
+      if (!login || !senha) {
+        mostrarToast('Preencha o usuário e a senha do gerente.', 'error');
+        return;
+      }
+
+      if (login === 'admin') {
+        mostrarToast('Este nome de usuário é reservado para o admin.', 'error');
+        return;
+      }
+
+      if (senha.length < 4) {
+        mostrarToast('A senha deve ter no mínimo 4 caracteres.', 'error');
+        return;
+      }
+
+      const gerentes = obterGerentes();
+      if (gerentes.some(g => g.login === login)) {
+        mostrarToast('Este nome de usuário já está em uso por outro gerente.', 'error');
+        return;
+      }
+
+      gerentes.push({ nome, login, senha });
+      localStorage.setItem('gerentes', JSON.stringify(gerentes));
+      mostrarToast('Gerente cadastrado com sucesso!', 'success');
+
+      document.getElementById('nomeGerente').value = '';
+      document.getElementById('loginGerente').value = '';
+      document.getElementById('senhaGerenteNovo').value = '';
+      renderizarGerentes();
+    }
+
+    function removerGerente(index) {
+      const gerentes = obterGerentes();
+      gerentes.splice(index, 1);
+      localStorage.setItem('gerentes', JSON.stringify(gerentes));
+      mostrarToast('Gerente removido.', 'success');
+      renderizarGerentes();
     }
 
     function renderizarAgentes() {
@@ -710,12 +833,6 @@
               <td class="py-3 text-center text-emerald-600 dark:text-emerald-400 font-600">${agente.visitas || 0}</td>
               <td class="py-3 text-center">
                 <div class="flex items-center justify-center gap-2">
-                  ${sessaoGerencial && sessaoGerencial.tipo === 'admin' ? `
-                  <button onclick="abrirSenhaAgente(${index})" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors">
-                    <i data-lucide="key-round" style="width:14px;height:14px;"></i>
-                    Editar Senha
-                  </button>
-                  ` : `
                   <button onclick="abrirCadastro(${index})" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors">
                     <i data-lucide="pencil" style="width:14px;height:14px;"></i>
                     Editar
@@ -724,7 +841,6 @@
                     <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
                     Excluir
                   </button>
-                  `}
                 </div>
               </td>
             </tr>
@@ -751,7 +867,7 @@
       renderizarAgentes();
     }
 
-    // ── Alterar apenas a senha de um agente (login admin - acesso restrito) ──
+    // ── Alterar apenas a senha de um agente (ação rápida, não usada na interface atual) ──
     let senhaAgenteEditIndex = null;
 
     function abrirSenhaAgente(index) {
@@ -831,7 +947,7 @@
       document.getElementById('modalRelatorios').classList.add('hidden');
     }
 
-    // ── Logs de Autenticação (acesso restrito - login gerencia/Master) ──
+    // ── Logs de Autenticação (visível para admin e gerente) ──
     function abrirLogs() {
       document.getElementById('filtroTipoLog').value = 'todos';
       const input = document.getElementById('filtroValorLog');
