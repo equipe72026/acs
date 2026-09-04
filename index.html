@@ -7,94 +7,124 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="estilo.css">
-  <style>
-    .login-container { background-image: none !important; }
-  </style>
+  <link rel="stylesheet" href="style.css">
  </head>
- <body class="h-full bg-slate-950 text-slate-100">
+ <body class="h-full bg-slate-50 text-slate-900">
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 w-full max-w-xs px-4"></div>
+
   <div id="app" class="h-full w-full flex login-container items-center justify-center p-4">
    
-   <div class="login-card w-full max-w-xs bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl">
+   <div class="login-card w-full max-w-xs bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl" id="loginCard">
     <div class="flex items-center justify-center gap-2 mb-6">
      <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
       <i data-lucide="heart-pulse" style="width:20px;height:20px;" class="text-white"></i>
      </div>
-     <span class="font-800 text-xl text-white">ACS Conecta</span>
+     <span class="font-800 text-xl text-slate-900">ACS Conecta</span>
     </div>
 
-    <h1 class="text-2xl font-800 text-white text-center mb-1">Bem-vindo</h1>
-    <p class="text-slate-400 text-xs text-center mb-6">Central do ACS</p>
+    <h1 class="text-2xl font-800 text-slate-900 text-center mb-1">Bem-vindo</h1>
+    <p class="text-slate-500 text-xs text-center mb-6">Central do ACS</p>
 
     <form action="pagina1.html" class="space-y-4 flex flex-col">
      <div>
-      <label for="username" class="block text-xs font-600 text-slate-300 mb-1">Usuário</label> 
-      <input type="text" id="username" placeholder="Digite seu usuário" class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+      <label for="username" class="block text-xs font-600 text-slate-600 mb-1">Usuário</label> 
+      <input type="text" id="username" placeholder="Digite seu usuário" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
      </div>
 
      <div>
-      <label for="password" class="block text-xs font-600 text-slate-300 mb-1">Senha</label> 
-      <input type="password" id="password" placeholder="Digite sua senha" class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+      <label for="password" class="block text-xs font-600 text-slate-600 mb-1">Senha</label> 
+      <input type="password" id="password" placeholder="Digite sua senha" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
      </div>
 
      <div class="flex items-center gap-2">
-      <input type="checkbox" id="remember" class="w-4 h-4 rounded accent-emerald-500 bg-white/5 border-white/10"> 
-      <label for="remember" class="text-xs text-slate-400">Lembrar de mim</label>
+      <input type="checkbox" id="remember" class="w-4 h-4 rounded accent-emerald-500 bg-slate-100 border-slate-200"> 
+      <label for="remember" class="text-xs text-slate-500">Lembrar de mim</label>
      </div>
 
      <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors duration-200 transform hover:scale-105 mt-2">Entrar</button>
     </form>
 
     <div class="mt-5 text-center">
-     <p class="text-slate-400 text-xs">Esqueceu sua senha? <a href="#" class="text-emerald-400 hover:text-emerald-300 font-600 transition-colors">Recuperar</a></p>
+     <p class="text-slate-500 text-xs">Esqueceu sua senha? <a href="#" class="text-emerald-600 hover:text-emerald-700 font-600 transition-colors">Recuperar</a></p>
     </div>
 
-    <div class="mt-4 pt-4 border-t border-white/5 flex flex-col gap-2">
-     <button type="button" onclick="abrirModalSenha()" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
-      <i data-lucide="shield-check" style="width:16px;height:16px;" class="text-emerald-400"></i>
+    <div class="mt-4 pt-4 border-t border-slate-200 flex flex-col gap-2">
+     <button type="button" onclick="abrirModalSenha()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-900 font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
+      <i data-lucide="shield-check" style="width:16px;height:16px;" class="text-emerald-600"></i>
       Área Gerencial
      </button>
      <div class="flex gap-2">
-      <button type="button" onclick="abrirModalQuemSomos()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
-       <i data-lucide="info" style="width:16px;height:16px;" class="text-sky-400"></i>
+      <button type="button" onclick="abrirModalQuemSomos()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-900 font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
+       <i data-lucide="info" style="width:16px;height:16px;" class="text-sky-600"></i>
        Quem Somos
       </button>
-      <button type="button" onclick="abrirModalSuporte()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
-       <i data-lucide="life-buoy" style="width:16px;height:16px;" class="text-violet-400"></i>
+      <button type="button" onclick="abrirModalSuporte()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-900 font-600 text-sm transition-colors duration-200 flex items-center justify-center gap-2 transform hover:scale-105">
+       <i data-lucide="life-buoy" style="width:16px;height:16px;" class="text-violet-600"></i>
        Suporte
       </button>
      </div>
     </div>
 
-    <div class="mt-6 pt-4 border-t border-white/5 text-center">
+    <div class="mt-6 pt-4 border-t border-slate-200 text-center">
      <p class="text-[10px] text-slate-500">© 2024 ACS Conecta.</p>
+    </div>
+   </div>
+
+   <!-- Card de Verificação em 2 Etapas (2FA) -->
+   <div id="card2FA" class="hidden login-card w-full max-w-xs bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl">
+    <div class="flex items-center justify-center gap-2 mb-6">
+     <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+      <i data-lucide="shield-check" style="width:20px;height:20px;" class="text-white"></i>
+     </div>
+     <span class="font-800 text-xl text-slate-900">ACS Conecta</span>
+    </div>
+
+    <h1 class="text-xl font-800 text-slate-900 text-center mb-1">Verificação de Segurança</h1>
+    <p class="text-slate-500 text-xs text-center mb-1">Responda a pergunta abaixo para confirmar sua identidade</p>
+    <p id="tentativas2FA" class="text-slate-400 text-[11px] text-center mb-5">Tentativa 1 de 3</p>
+
+    <div class="space-y-4">
+     <div>
+      <label class="block text-xs font-600 text-slate-600 mb-1" id="pergunta2FA">Qual o nome da sua mãe?</label>
+      <input type="text" id="resposta2FA" placeholder="Digite sua resposta"
+       onkeydown="if(event.key==='Enter') verificarResposta2FA()"
+       class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+     </div>
+
+     <button type="button" onclick="verificarResposta2FA()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors duration-200 transform hover:scale-105">Confirmar</button>
+     <button type="button" onclick="cancelar2FA()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-600 text-sm transition-colors">Voltar ao Login</button>
     </div>
    </div>
 
   </div>
 
   <div id="modalSenha" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl">
+    <div class="w-full max-w-xs bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl">
       <div class="flex items-center gap-3 mb-5">
         <div class="w-10 h-10 bg-emerald-500/15 rounded-xl flex items-center justify-center">
-          <i data-lucide="shield-check" style="width:20px;height:20px;" class="text-emerald-400"></i>
+          <i data-lucide="shield-check" style="width:20px;height:20px;" class="text-emerald-600"></i>
         </div>
         <div>
-          <p class="font-700 text-white text-sm">Área Gerencial</p>
-          <p class="text-slate-400 text-xs">Digite a senha de acesso</p>
+          <p class="font-700 text-slate-900 text-sm">Área Gerencial</p>
+          <p class="text-slate-500 text-xs">Digite o usuário e a senha de acesso</p>
         </div>
       </div>
-      <div class="relative">
-        <input type="password" id="senhaGerencial" placeholder="Senha"
-          onkeydown="if(event.key==='Enter') confirmarSenha()"
-          class="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all pr-10">
-        <button type="button" onclick="toggleSenhaVisivel()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-          <i id="iconOlho" data-lucide="eye" style="width:16px;height:16px;"></i>
-        </button>
+      <div class="space-y-3">
+        <input type="text" id="usuarioGerencial" placeholder="Usuário" autocomplete="username"
+          onkeydown="if(event.key==='Enter') document.getElementById('senhaGerencial').focus()"
+          class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all">
+        <div class="relative">
+          <input type="password" id="senhaGerencial" placeholder="Senha" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter') confirmarSenha()"
+            class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all pr-10">
+          <button type="button" onclick="toggleSenhaVisivel()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-600 transition-colors">
+            <i id="iconOlho" data-lucide="eye" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
       </div>
-      <p id="erroSenha" class="text-red-400 text-xs mt-2 hidden">Senha incorreta. Tente novamente.</p>
+      <p id="erroSenha" class="text-red-500 text-xs mt-2 hidden">Usuário ou senha incorretos. Tente novamente.</p>
       <div class="flex gap-2 mt-5">
-        <button onclick="fecharModalSenha()" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-600 text-sm transition-colors">Cancelar</button>
+        <button onclick="fecharModalSenha()" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-600 text-sm transition-colors">Cancelar</button>
         <button onclick="confirmarSenha()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Entrar</button>
       </div>
     </div>
@@ -102,57 +132,57 @@
 
   <!-- Modal Quem Somos -->
   <div id="modalQuemSomos" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="w-full max-w-sm bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center gap-3 mb-5">
         <div class="w-10 h-10 bg-sky-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
-          <i data-lucide="info" style="width:20px;height:20px;" class="text-sky-400"></i>
+          <i data-lucide="info" style="width:20px;height:20px;" class="text-sky-600"></i>
         </div>
         <div>
-          <p class="font-700 text-white text-sm">Quem Somos</p>
-          <p class="text-slate-400 text-xs">Conheça o Seven Sys</p>
+          <p class="font-700 text-slate-900 text-sm">Quem Somos</p>
+          <p class="text-slate-500 text-xs">Conheça o Seven Sys</p>
         </div>
       </div>
 
       <div class="space-y-4 text-sm">
         <div>
-          <h3 class="font-700 text-white mb-1">O que é o Seven Sys?</h3>
-          <p class="text-slate-400 text-xs leading-relaxed">O Seven Sys é uma plataforma desenvolvida para modernizar e otimizar a rotina do Agente Comunitário de Saúde (ACS), transformando o trabalho em um processo digital ágil e eficiente.</p>
+          <h3 class="font-700 text-slate-900 mb-1">O que é o Seven Sys?</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">O Seven Sys é uma plataforma desenvolvida para modernizar e otimizar a rotina do Agente Comunitário de Saúde (ACS), transformando o trabalho em um processo digital ágil e eficiente.</p>
         </div>
 
         <div>
-          <h3 class="font-700 text-white mb-1">Transformando a Gestão da Saúde</h3>
-          <p class="text-slate-400 text-xs leading-relaxed">Unimos tecnologia com a realidade das comunidades para oferecer uma solução com inteligência e cuidado.</p>
+          <h3 class="font-700 text-slate-900 mb-1">Transformando a Gestão da Saúde</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">Unimos tecnologia com a realidade das comunidades para oferecer uma solução com inteligência e cuidado.</p>
         </div>
 
         <div>
-          <h3 class="font-700 text-white mb-2">Destaques da Plataforma</h3>
+          <h3 class="font-700 text-slate-900 mb-2">Destaques da Plataforma</h3>
           <div class="space-y-2">
-            <div class="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-              <i data-lucide="smartphone" style="width:15px;height:15px;" class="text-sky-400 flex-shrink-0"></i>
+            <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2">
+              <i data-lucide="smartphone" style="width:15px;height:15px;" class="text-sky-600 flex-shrink-0"></i>
               <div>
-                <span class="text-white font-600 text-xs">Mobilidade Total</span>
-                <p class="text-slate-400 text-xs">Use no celular ou tablet.</p>
+                <span class="text-slate-900 font-600 text-xs">Mobilidade Total</span>
+                <p class="text-slate-500 text-xs">Use no celular ou tablet.</p>
               </div>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-              <i data-lucide="wifi-off" style="width:15px;height:15px;" class="text-amber-400 flex-shrink-0"></i>
+            <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2">
+              <i data-lucide="wifi-off" style="width:15px;height:15px;" class="text-amber-600 flex-shrink-0"></i>
               <div>
-                <span class="text-white font-600 text-xs">Offline</span>
-                <p class="text-slate-400 text-xs">Funciona sem internet.</p>
+                <span class="text-slate-900 font-600 text-xs">Offline</span>
+                <p class="text-slate-500 text-xs">Funciona sem internet.</p>
               </div>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-              <i data-lucide="map-pin" style="width:15px;height:15px;" class="text-emerald-400 flex-shrink-0"></i>
+            <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2">
+              <i data-lucide="map-pin" style="width:15px;height:15px;" class="text-emerald-600 flex-shrink-0"></i>
               <div>
-                <span class="text-white font-600 text-xs">Geolocalização</span>
-                <p class="text-slate-400 text-xs">Planeje rotas.</p>
+                <span class="text-slate-900 font-600 text-xs">Geolocalização</span>
+                <p class="text-slate-500 text-xs">Planeje rotas.</p>
               </div>
             </div>
-            <div class="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2">
-              <i data-lucide="bar-chart-2" style="width:15px;height:15px;" class="text-violet-400 flex-shrink-0"></i>
+            <div class="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2">
+              <i data-lucide="bar-chart-2" style="width:15px;height:15px;" class="text-violet-600 flex-shrink-0"></i>
               <div>
-                <span class="text-white font-600 text-xs">Indicadores</span>
-                <p class="text-slate-400 text-xs">Dados em tempo real.</p>
+                <span class="text-slate-900 font-600 text-xs">Indicadores</span>
+                <p class="text-slate-500 text-xs">Dados em tempo real.</p>
               </div>
             </div>
           </div>
@@ -165,37 +195,37 @@
 
   <!-- Modal Suporte -->
   <div id="modalSuporte" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-slate-900 rounded-2xl p-6 border border-white/10 shadow-2xl">
+    <div class="w-full max-w-xs bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl">
       <div class="flex items-center gap-3 mb-5">
         <div class="w-10 h-10 bg-violet-500/15 rounded-xl flex items-center justify-center flex-shrink-0">
-          <i data-lucide="life-buoy" style="width:20px;height:20px;" class="text-violet-400"></i>
+          <i data-lucide="life-buoy" style="width:20px;height:20px;" class="text-violet-600"></i>
         </div>
         <div>
-          <p class="font-700 text-white text-sm">Suporte</p>
-          <p class="text-slate-400 text-xs">Entre em contato conosco</p>
+          <p class="font-700 text-slate-900 text-sm">Suporte</p>
+          <p class="text-slate-500 text-xs">Entre em contato conosco</p>
         </div>
       </div>
 
       <div class="space-y-3">
-        <a href="tel:+5521999999999" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 transition-colors group">
-          <i data-lucide="phone" style="width:16px;height:16px;" class="text-emerald-400 flex-shrink-0"></i>
+        <a href="tel:+5521999999999" class="flex items-center gap-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl px-4 py-3 transition-colors group">
+          <i data-lucide="phone" style="width:16px;height:16px;" class="text-emerald-600 flex-shrink-0"></i>
           <div>
-            <p class="text-xs text-slate-400 font-600">Telefone</p>
-            <p class="text-white text-sm font-700">(21) 99999-9999</p>
+            <p class="text-xs text-slate-500 font-600">Telefone</p>
+            <p class="text-slate-900 text-sm font-700">(21) 99999-9999</p>
           </div>
         </a>
-        <a href="https://wa.me/5521999999999" target="_blank" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 transition-colors group">
-          <i data-lucide="message-circle" style="width:16px;height:16px;" class="text-green-400 flex-shrink-0"></i>
+        <a href="https://wa.me/5521999999999" target="_blank" class="flex items-center gap-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl px-4 py-3 transition-colors group">
+          <i data-lucide="message-circle" style="width:16px;height:16px;" class="text-green-600 flex-shrink-0"></i>
           <div>
-            <p class="text-xs text-slate-400 font-600">WhatsApp</p>
-            <p class="text-white text-sm font-700">(21) 99999-9999</p>
+            <p class="text-xs text-slate-500 font-600">WhatsApp</p>
+            <p class="text-slate-900 text-sm font-700">(21) 99999-9999</p>
           </div>
         </a>
-        <a href="mailto:suporte@sevensys.com.br" class="flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 transition-colors">
-          <i data-lucide="mail" style="width:16px;height:16px;" class="text-sky-400 flex-shrink-0"></i>
+        <a href="mailto:suporte@sevensys.com.br" class="flex items-center gap-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl px-4 py-3 transition-colors">
+          <i data-lucide="mail" style="width:16px;height:16px;" class="text-sky-600 flex-shrink-0"></i>
           <div>
-            <p class="text-xs text-slate-400 font-600">E-mail</p>
-            <p class="text-white text-sm font-700">suporte@sevensys.com.br</p>
+            <p class="text-xs text-slate-500 font-600">E-mail</p>
+            <p class="text-slate-900 text-sm font-700">suporte@sevensys.com.br</p>
           </div>
         </a>
       </div>
@@ -207,11 +237,35 @@
 <script>
   lucide.createIcons();
 
+  function mostrarToast(mensagem, tipo = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    const estilos = {
+      success: { bg: 'bg-emerald-600', icon: 'check-circle' },
+      error: { bg: 'bg-red-600', icon: 'x-circle' },
+      warning: { bg: 'bg-amber-500', icon: 'alert-triangle' },
+      info: { bg: 'bg-sky-600', icon: 'info' }
+    };
+    const cfg = estilos[tipo] || estilos.info;
+    const toast = document.createElement('div');
+    toast.className = `toast-item ${cfg.bg} text-white text-sm font-600 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-2`;
+    toast.innerHTML = `<i data-lucide="${cfg.icon}" style="width:16px;height:16px;" class="flex-shrink-0"></i><span>${mensagem}</span>`;
+    container.appendChild(toast);
+    lucide.createIcons();
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-8px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
   function abrirModalSenha() {
+    document.getElementById('usuarioGerencial').value = '';
     document.getElementById('senhaGerencial').value = '';
     document.getElementById('erroSenha').classList.add('hidden');
     document.getElementById('modalSenha').classList.remove('hidden');
-    setTimeout(() => document.getElementById('senhaGerencial').focus(), 50);
+    setTimeout(() => document.getElementById('usuarioGerencial').focus(), 50);
   }
 
   function fecharModalSenha() {
@@ -219,13 +273,20 @@
   }
 
   function confirmarSenha() {
-    // Corrigido aqui: removido o espaço em branco na declaração da variável
+    const usuarioDigitado = document.getElementById('usuarioGerencial').value.trim();
     const senhaDigitada = document.getElementById('senhaGerencial').value;
-    
-    // Busca a senha atualizada do LocalStorage. Se não houver nada salvo, usa 'admin123' como padrão.
-    const senhaValida = localStorage.getItem('senhaGerente') || 'admin123';
 
-    if (senhaDigitada === senhaValida) {
+    // Conta de acesso total ao painel gerencial.
+    const loginGerencia = usuarioDigitado === 'gerente' && senhaDigitada === '123';
+
+    // Conta "admin": senha pode ter sido alterada via Opções > Senha de Acesso (fica salva no LocalStorage).
+    // Acesso restrito: apenas visualização dos cadastros e edição da senha dos agentes.
+    const senhaAdminValida = localStorage.getItem('senhaGerente') || '123';
+    const loginAdmin = usuarioDigitado === 'admin' && senhaDigitada === senhaAdminValida;
+
+    if (loginGerencia || loginAdmin) {
+      const sessao = { usuario: usuarioDigitado, tipo: loginGerencia ? 'gerencia' : 'admin' };
+      localStorage.setItem('gerencia_sessao', JSON.stringify(sessao));
       window.location.href = 'gerencia.html';
     } else {
       document.getElementById('erroSenha').classList.remove('hidden');
@@ -273,6 +334,93 @@
     document.getElementById('modalSuporte').classList.add('hidden');
   }
 
+  // ── Autenticação em 2 Fatores (2FA) ──
+  const perguntas2FA = [
+    { campo: 'motherName', texto: 'Qual o nome da sua mãe?', label: 'Nome da mãe' },
+    { campo: 'birthdate', texto: 'Qual a data do seu nascimento?', label: 'Data de nascimento' },
+    { campo: 'cep', texto: 'Qual o CEP do seu endereço?', label: 'CEP' }
+  ];
+
+  let agente2FA = null;
+  let pergunta2FA = null;
+  let tentativas2FA = 0;
+
+  function normalizarTexto(valor) {
+    return (valor || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function normalizarAlfanumerico(valor) {
+    return normalizarTexto(valor).replace(/[^a-z0-9]/g, '');
+  }
+
+  function registrarLogAutenticacao(agente, pergunta) {
+    const logs = JSON.parse(localStorage.getItem('logs_autenticacao')) || [];
+    logs.push({
+      dataHora: new Date().toISOString(),
+      nome: agente.name || agente.login || '',
+      cpf: agente.cpf || '',
+      login: agente.login || '',
+      fator2FA: pergunta.label
+    });
+    localStorage.setItem('logs_autenticacao', JSON.stringify(logs));
+  }
+
+  function iniciar2FA(agente) {
+    agente2FA = agente;
+    tentativas2FA = 0;
+    pergunta2FA = perguntas2FA[Math.floor(Math.random() * perguntas2FA.length)];
+
+    document.getElementById('pergunta2FA').innerText = pergunta2FA.texto;
+    document.getElementById('resposta2FA').value = '';
+    document.getElementById('tentativas2FA').innerText = `Tentativa ${tentativas2FA + 1} de 3`;
+
+    document.getElementById('loginCard').classList.add('hidden');
+    document.getElementById('card2FA').classList.remove('hidden');
+    setTimeout(() => document.getElementById('resposta2FA').focus(), 50);
+  }
+
+  function verificarResposta2FA() {
+    if (!agente2FA || !pergunta2FA) return;
+
+    const resposta = document.getElementById('resposta2FA').value;
+    const valorCorreto = agente2FA[pergunta2FA.campo] || '';
+
+    const acertou = pergunta2FA.campo === 'motherName'
+      ? normalizarTexto(resposta) === normalizarTexto(valorCorreto)
+      : normalizarAlfanumerico(resposta) === normalizarAlfanumerico(valorCorreto);
+
+    if (acertou) {
+      registrarLogAutenticacao(agente2FA, pergunta2FA);
+      localStorage.setItem('agente_sessao', JSON.stringify(agente2FA));
+      window.location.href = 'painel-acs.html';
+      return;
+    }
+
+    tentativas2FA++;
+
+    if (tentativas2FA >= 3) {
+      mostrarToast('3 tentativas sem sucesso! Favor realizar Login novamente.', 'error');
+      cancelar2FA();
+      return;
+    }
+
+    mostrarToast(`Resposta incorreta. Restam ${3 - tentativas2FA} tentativa(s).`, 'warning');
+    document.getElementById('resposta2FA').value = '';
+    document.getElementById('resposta2FA').focus();
+    document.getElementById('tentativas2FA').innerText = `Tentativa ${tentativas2FA + 1} de 3`;
+  }
+
+  function cancelar2FA() {
+    agente2FA = null;
+    pergunta2FA = null;
+    tentativas2FA = 0;
+    document.getElementById('card2FA').classList.add('hidden');
+    document.getElementById('loginCard').classList.remove('hidden');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    setTimeout(() => document.getElementById('username').focus(), 50);
+  }
+
   document.querySelector('form').addEventListener('submit', function(e) {
     e.preventDefault();
     const userIn = document.getElementById('username').value;
@@ -283,10 +431,9 @@
     const agenteLogado = agentes.find(a => a.login === userIn && a.password === passIn);
 
     if (agenteLogado) {
-      localStorage.setItem('agente_sessao', JSON.stringify(agenteLogado));
-      window.location.href = 'painel-acs.html';
+      iniciar2FA(agenteLogado);
     } else {
-      alert('Usuário ou senha incorretos! Cadastre um agente na Área Gerencial primeiro.');
+      mostrarToast('Usuário ou senha incorretos! Cadastre um agente na Área Gerencial primeiro.', 'error');
     }
   });
 </script>

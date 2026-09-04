@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" class="h-full dark">
+<html lang="pt-BR" class="h-full">
 <head>
   <script src="/_sdk/telemetry_sdk.js"></script>
   <meta charset="UTF-8">
@@ -13,15 +13,13 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { box-sizing: border-box; }
-    .error-message { display: none; color: #f87171; font-size: 0.75rem; margin-top: 0.25rem; }
-    .show-error + .error-message { display: block; }
-  </style>
+  <link rel="stylesheet" href="style.css">
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col md:flex-row overflow-hidden transition-colors duration-200">
+
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 md:left-auto md:right-4 md:translate-x-0 z-[200] flex flex-col gap-2 w-full max-w-xs px-4 md:px-0"></div>
 
   <!-- Sidebar -->
   <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-white/10 p-6 hidden md:flex flex-col flex-shrink-0 transition-colors duration-200">
@@ -40,7 +38,7 @@
         <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i>
         Estatísticas
       </a>
-      <button onclick="abrirCadastro()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+      <button onclick="abrirCadastro()" class="acesso-total w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
         <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
         Cadastrar Agente
       </button>
@@ -50,6 +48,11 @@
         Relatórios
       </button>
 
+      <button onclick="abrirLogs()" class="so-master w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
+        <i data-lucide="scroll-text" style="width:18px;height:18px;"></i>
+        Logs de Autenticação
+      </button>
+
       <button onclick="abrirOpcoes()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600 dark:text-slate-400 hover:bg-slate-100 hover:dark:bg-slate-800 hover:text-slate-900 hover:dark:text-white transition-colors">
         <i data-lucide="settings" style="width:18px;height:18px;"></i>
         Opções
@@ -57,7 +60,7 @@
     </nav>
 
     <div class="border-t border-slate-200 dark:border-white/10 pt-4">
-      <a href="index.html" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-red-600/20 hover:text-red-600 hover:dark:text-red-400 transition-colors font-600 text-sm justify-center">
+      <a href="index.html" onclick="localStorage.removeItem('gerencia_sessao')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-red-600/20 hover:text-red-600 hover:dark:text-red-400 transition-colors font-600 text-sm justify-center">
         <i data-lucide="log-out" style="width:16px;height:16px;"></i>
         Sair do Painel
       </a>
@@ -65,12 +68,12 @@
   </aside>
 
   <!-- Bottom Nav Mobile -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 p-4 flex justify-around items-center z-50 transition-colors duration-200">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/10 px-3 py-3 flex justify-around items-center gap-1 overflow-x-auto z-50 transition-colors duration-200">
     <a href="#" class="flex flex-col items-center gap-1 text-slate-900 dark:text-white">
       <i data-lucide="bar-chart-3" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Estatísticas</span>
     </a>
-    <button onclick="abrirCadastro()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+    <button onclick="abrirCadastro()" class="acesso-total flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
       <i data-lucide="user-plus" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Cadastrar</span>
     </button>
@@ -80,11 +83,16 @@
       <span class="text-[10px]">Relatórios</span>
     </button>
 
+    <button onclick="abrirLogs()" class="so-master flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+      <i data-lucide="scroll-text" style="width:20px;height:20px;"></i>
+      <span class="text-[10px]">Logs</span>
+    </button>
+
     <button onclick="abrirOpcoes()" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
       <i data-lucide="settings" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Opções</span>
     </button>
-    <a href="index.html" class="flex flex-col items-center gap-1 text-red-500 dark:text-red-400">
+    <a href="index.html" onclick="localStorage.removeItem('gerencia_sessao')" class="flex flex-col items-center gap-1 text-red-500 dark:text-red-400">
       <i data-lucide="log-out" style="width:20px;height:20px;"></i>
       <span class="text-[10px]">Sair</span>
     </a>
@@ -96,8 +104,12 @@
       <div>
         <h1 class="text-2xl md:text-3xl font-800 text-slate-900 dark:text-white tracking-tight">Painel de Controle</h1>
         <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Estatísticas em tempo real baseadas no localStorage.</p>
+        <p id="badgeSessao" class="hidden mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] font-700 uppercase tracking-wide">
+          <i data-lucide="eye" style="width:12px;height:12px;"></i>
+          Modo Visualização
+        </p>
       </div>
-      <button onclick="abrirCadastro()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
+      <button onclick="abrirCadastro()" class="acesso-total inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all transform hover:scale-105">
         <i data-lucide="user-plus" style="width:18px;height:18px;"></i>
         Cadastrar Novo Agente
       </button>
@@ -173,8 +185,18 @@
               <input type="text" id="name" placeholder="Mínimo 15 caracteres" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required minlength="15">
               <div class="error-message">O nome deve ter no mínimo 15 caracteres</div>
             </div>
-            <!-- Nascimento + Sexo na mesma linha -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Nome da mãe — linha inteira -->
+            <div>
+              <label for="motherName" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Nome da mãe *</label>
+              <input type="text" id="motherName" placeholder="Nome completo da mãe" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+            </div>
+            <!-- CPF + Nascimento + Sexo -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="cpf" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">CPF *</label>
+                <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                <div class="error-message">CPF inválido (11 dígitos)</div>
+              </div>
               <div>
                 <label for="birthdate" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Data de Nascimento *</label>
                 <input type="text" id="birthdate" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskDate(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
@@ -396,6 +418,64 @@
     </div>
   </div>
 
+  <!-- Modal Logs de Autenticação (acesso restrito - login gerencia/Master) -->
+  <div id="modalLogs" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 w-full max-w-3xl shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-violet-500/10 rounded-xl flex items-center justify-center">
+            <i data-lucide="scroll-text" style="width:18px;height:18px;" class="text-violet-500 dark:text-violet-400"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-800 text-slate-900 dark:text-white">Logs de Autenticação</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Entradas dos agentes no sistema via 2º Fator de Autenticação.</p>
+          </div>
+        </div>
+        <button onclick="fecharLogs()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <!-- Filtro de Busca -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="sm:w-48">
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Buscar por</label>
+          <select id="filtroTipoLog" onchange="onMudarTipoFiltroLog()" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 [&>option]:text-black [&>option]:bg-white">
+            <option value="todos">Todos</option>
+            <option value="nome">Nome do usuário</option>
+            <option value="cpf">CPF</option>
+          </select>
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Termo de busca</label>
+          <div class="relative">
+            <i data-lucide="search" style="width:15px;height:15px;" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+            <input type="text" id="filtroValorLog" oninput="renderizarLogs()" disabled placeholder="Selecione Nome ou CPF ao lado" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all disabled:opacity-60">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de Logs -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider border-b border-slate-200 dark:border-white/10">
+              <th class="py-2 pr-3">Data / Hora</th>
+              <th class="py-2 pr-3">Nome</th>
+              <th class="py-2 pr-3">CPF</th>
+              <th class="py-2 pr-3">2º Fator (2FA)</th>
+            </tr>
+          </thead>
+          <tbody id="listaLogs" class="divide-y divide-slate-100 dark:divide-white/5"></tbody>
+        </table>
+      </div>
+      <p id="totalLogs" class="text-xs text-slate-500 dark:text-slate-400"></p>
+
+      <button onclick="fecharLogs()" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-600 text-sm transition-colors">Fechar</button>
+    </div>
+  </div>
+
   <!-- Modal Opções -->
   <div id="modalOpcoes" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full shadow-xl space-y-4">
@@ -414,10 +494,10 @@
       <!-- Tema -->
       <div class="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <i id="theme-icon-opcoes" data-lucide="moon" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
+          <i id="theme-icon-opcoes" data-lucide="sun" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
           <div>
             <p class="text-sm font-700 text-slate-800 dark:text-white">Tema</p>
-            <p id="theme-text-opcoes" class="text-xs text-slate-500 dark:text-slate-400">Modo Escuro ativo</p>
+            <p id="theme-text-opcoes" class="text-xs text-slate-500 dark:text-slate-400">Modo Claro ativo</p>
           </div>
         </div>
         <button onclick="toggleDarkMode()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-700 text-xs transition-colors">
@@ -426,12 +506,12 @@
       </div>
 
       <!-- Alterar Senha -->
-      <div class="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+      <div class="acesso-total bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <i data-lucide="key-round" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
           <div>
             <p class="text-sm font-700 text-slate-800 dark:text-white">Senha de Acesso</p>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Alterar senha do gerente</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Alterar senha do login "admin"</p>
           </div>
         </div>
         <button onclick="fecharOpcoes(); abrirModalSenha()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs transition-colors">
@@ -465,7 +545,87 @@
     </div>
   </div>
 
+  <!-- Modal Alterar Senha do Agente (acesso restrito - login admin) -->
+  <div id="modalSenhaAgente" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-sm w-full space-y-4 shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-amber-500/10 rounded-xl flex items-center justify-center">
+          <i data-lucide="key-round" style="width:18px;height:18px;" class="text-amber-500 dark:text-amber-400"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-800 text-slate-900 dark:text-white">Alterar Senha do Agente</h3>
+          <p id="senhaAgenteNome" class="text-xs text-slate-500 dark:text-slate-400"></p>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nova Senha</label>
+          <input type="password" id="novaSenhaAgente" minlength="6" placeholder="Mínimo 6 caracteres" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Confirmar Nova Senha</label>
+          <input type="password" id="confirmarNovaSenhaAgente" minlength="6" placeholder="Repita a senha" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="fecharSenhaAgente()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-600 text-sm transition-colors">Cancelar</button>
+        <button onclick="salvarSenhaAgente()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ── Sistema de notificações (toast) ──
+    function mostrarToast(mensagem, tipo = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const estilos = {
+        success: { bg: 'bg-emerald-600', icon: 'check-circle' },
+        error: { bg: 'bg-red-600', icon: 'x-circle' },
+        warning: { bg: 'bg-amber-500', icon: 'alert-triangle' },
+        info: { bg: 'bg-sky-600', icon: 'info' }
+      };
+      const cfg = estilos[tipo] || estilos.info;
+      const toast = document.createElement('div');
+      toast.className = `toast-item ${cfg.bg} text-white text-sm font-600 rounded-xl shadow-2xl px-4 py-3 flex items-center gap-2`;
+      toast.innerHTML = `<i data-lucide="${cfg.icon}" style="width:16px;height:16px;" class="flex-shrink-0"></i><span>${mensagem}</span>`;
+      container.appendChild(toast);
+      lucide.createIcons();
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-8px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // ── Controle de acesso do painel gerencial ──
+    let sessaoGerencial = null;
+
+    function carregarSessaoGerencial() {
+      try {
+        sessaoGerencial = JSON.parse(localStorage.getItem('gerencia_sessao'));
+      } catch (e) {
+        sessaoGerencial = null;
+      }
+
+      if (!sessaoGerencial || !sessaoGerencial.tipo) {
+        window.location.href = 'index.html';
+        return false;
+      }
+
+      if (sessaoGerencial.tipo === 'admin') {
+        document.querySelectorAll('.acesso-total').forEach(el => el.classList.add('hidden'));
+        const badge = document.getElementById('badgeSessao');
+        if (badge) badge.classList.remove('hidden');
+      }
+
+      if (sessaoGerencial.tipo !== 'gerencia') {
+        document.querySelectorAll('.so-master').forEach(el => el.classList.add('hidden'));
+      }
+      return true;
+    }
+
     function aplicarTema(tema) {
       const html = document.documentElement;
       const iconOpcoes = document.getElementById('theme-icon-opcoes');
@@ -513,17 +673,17 @@
       const confirmarSenha = document.getElementById('confirmarSenha').value;
 
       if (!novaSenha || !confirmarSenha) {
-        alert('Por favor, preencha todos os campos.');
+        mostrarToast('Por favor, preencha todos os campos.', 'error');
         return;
       }
 
       if (novaSenha !== confirmarSenha) {
-        alert('As senhas no coincidem. Tente novamente.');
+        mostrarToast('As senhas não coincidem. Tente novamente.', 'error');
         return;
       }
 
       localStorage.setItem('senhaGerente', novaSenha);
-      alert('Senha do gerenciador alterada com sucesso!');
+      mostrarToast('Senha do gerenciador alterada com sucesso!', 'success');
       fecharModalSenha();
     }
 
@@ -550,6 +710,12 @@
               <td class="py-3 text-center text-emerald-600 dark:text-emerald-400 font-600">${agente.visitas || 0}</td>
               <td class="py-3 text-center">
                 <div class="flex items-center justify-center gap-2">
+                  ${sessaoGerencial && sessaoGerencial.tipo === 'admin' ? `
+                  <button onclick="abrirSenhaAgente(${index})" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors">
+                    <i data-lucide="key-round" style="width:14px;height:14px;"></i>
+                    Editar Senha
+                  </button>
+                  ` : `
                   <button onclick="abrirCadastro(${index})" class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors">
                     <i data-lucide="pencil" style="width:14px;height:14px;"></i>
                     Editar
@@ -558,6 +724,7 @@
                     <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
                     Excluir
                   </button>
+                  `}
                 </div>
               </td>
             </tr>
@@ -584,8 +751,57 @@
       renderizarAgentes();
     }
 
+    // ── Alterar apenas a senha de um agente (login admin - acesso restrito) ──
+    let senhaAgenteEditIndex = null;
+
+    function abrirSenhaAgente(index) {
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const agente = agentes[index];
+      if (!agente) return;
+
+      senhaAgenteEditIndex = index;
+      document.getElementById('senhaAgenteNome').innerText = agente.name;
+      document.getElementById('novaSenhaAgente').value = '';
+      document.getElementById('confirmarNovaSenhaAgente').value = '';
+      document.getElementById('modalSenhaAgente').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharSenhaAgente() {
+      document.getElementById('modalSenhaAgente').classList.add('hidden');
+      senhaAgenteEditIndex = null;
+    }
+
+    function salvarSenhaAgente() {
+      const nova = document.getElementById('novaSenhaAgente').value;
+      const confirmar = document.getElementById('confirmarNovaSenhaAgente').value;
+
+      if (!nova || !confirmar) {
+        mostrarToast('Preencha os dois campos de senha.', 'error');
+        return;
+      }
+      if (nova.length < 6) {
+        mostrarToast('A senha deve ter no mínimo 6 caracteres.', 'error');
+        return;
+      }
+      if (nova !== confirmar) {
+        mostrarToast('As senhas não coincidem.', 'error');
+        return;
+      }
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      if (senhaAgenteEditIndex === null || !agentes[senhaAgenteEditIndex]) return;
+
+      agentes[senhaAgenteEditIndex].password = nova;
+      localStorage.setItem('agentes', JSON.stringify(agentes));
+      mostrarToast('Senha do agente atualizada com sucesso!', 'success');
+      fecharSenhaAgente();
+    }
+
     window.addEventListener('load', function () {
-      const temaSalvo = localStorage.getItem('theme') || 'dark';
+      const sessaoValida = carregarSessaoGerencial();
+      if (!sessaoValida) return;
+      const temaSalvo = localStorage.getItem('theme') || 'light';
       aplicarTema(temaSalvo);
       renderizarAgentes();
     });
@@ -613,6 +829,82 @@
 
     function fecharRelatorios() {
       document.getElementById('modalRelatorios').classList.add('hidden');
+    }
+
+    // ── Logs de Autenticação (acesso restrito - login gerencia/Master) ──
+    function abrirLogs() {
+      document.getElementById('filtroTipoLog').value = 'todos';
+      const input = document.getElementById('filtroValorLog');
+      input.value = '';
+      input.disabled = true;
+      input.placeholder = 'Selecione Nome ou CPF ao lado';
+
+      renderizarLogs();
+      document.getElementById('modalLogs').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharLogs() {
+      document.getElementById('modalLogs').classList.add('hidden');
+    }
+
+    function onMudarTipoFiltroLog() {
+      const tipo = document.getElementById('filtroTipoLog').value;
+      const input = document.getElementById('filtroValorLog');
+
+      if (tipo === 'todos') {
+        input.value = '';
+        input.disabled = true;
+        input.placeholder = 'Selecione Nome ou CPF ao lado';
+      } else {
+        input.disabled = false;
+        input.placeholder = tipo === 'nome' ? 'Digite o nome do usuário...' : 'Digite o CPF...';
+        input.focus();
+      }
+      renderizarLogs();
+    }
+
+    function renderizarLogs() {
+      const tipo = document.getElementById('filtroTipoLog').value;
+      const termoBruto = document.getElementById('filtroValorLog').value.trim();
+
+      let logs = JSON.parse(localStorage.getItem('logs_autenticacao')) || [];
+
+      // Ordena do mais recente para o mais antigo
+      logs = logs.slice().sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora));
+
+      if (tipo !== 'todos' && termoBruto) {
+        if (tipo === 'nome') {
+          const termo = termoBruto.toLowerCase();
+          logs = logs.filter(l => (l.nome || '').toLowerCase().includes(termo));
+        } else if (tipo === 'cpf') {
+          const termoCpf = termoBruto.replace(/\D/g, '');
+          logs = logs.filter(l => (l.cpf || '').replace(/\D/g, '').includes(termoCpf));
+        }
+      }
+
+      const tbody = document.getElementById('listaLogs');
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-500">Nenhum registro de acesso encontrado.</td></tr>';
+      } else {
+        tbody.innerHTML = logs.map(l => {
+          const dt = new Date(l.dataHora);
+          const dataFormatada = isNaN(dt.getTime()) ? '—' : dt.toLocaleString('pt-BR');
+          return `
+            <tr>
+              <td class="py-2.5 pr-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">${dataFormatada}</td>
+              <td class="py-2.5 pr-3 font-600 text-slate-900 dark:text-white">${l.nome || '—'}</td>
+              <td class="py-2.5 pr-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">${l.cpf || '—'}</td>
+              <td class="py-2.5 pr-3">
+                <span class="inline-flex items-center px-2 py-1 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 text-xs font-700">${l.fator2FA || '—'}</span>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('totalLogs').innerText = `${logs.length} registro(s) encontrado(s).`;
+      lucide.createIcons();
     }
 
     function getVisitasFiltradas() {
@@ -882,6 +1174,8 @@
           document.getElementById('btnSubmit').innerText = 'Salvar Alterações';
 
           document.getElementById('name').value = agente.name || '';
+          document.getElementById('motherName').value = agente.motherName || '';
+          document.getElementById('cpf').value = agente.cpf || '';
           document.getElementById('birthdate').value = agente.birthdate || '';
           document.getElementById('gender').value = agente.gender || '';
           document.getElementById('phone').value = agente.phone || '';
@@ -943,6 +1237,14 @@
         });
     }
 
+    function maskCpf(input) {
+      let v = input.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})$/, '$1.$2.$3-$4');
+      else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+      else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3})$/, '$1.$2');
+      input.value = v;
+    }
+
     function maskPhone(input) {
       let value = input.value.replace(/\D/g, "");
       if (value.length > 11) value = value.slice(0, 11);
@@ -966,6 +1268,8 @@
       const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
 
       const name = document.getElementById('name').value.trim();
+      const motherName = document.getElementById('motherName').value.trim();
+      const cpf = document.getElementById('cpf').value.trim();
       const birthdate = document.getElementById('birthdate').value.trim();
       const gender = document.getElementById('gender').value;
       const phone = document.getElementById('phone').value;
@@ -981,6 +1285,14 @@
       const area = document.getElementById('area').value;
 
       let isValid = true;
+
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      if (cpfLimpo.length !== 11) {
+        document.getElementById('cpf').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('cpf').classList.remove('show-error');
+      }
 
       if (password !== confirmPassword) {
         document.getElementById('confirmPassword').classList.add('show-error');
@@ -998,14 +1310,14 @@
       }
 
       if (!birthdate) {
-        alert('Informe a data de nascimento.');
+        mostrarToast('Informe a data de nascimento.', 'error');
         return false;
       }
 
       if (!isValid) return false;
 
       const novoAgente = {
-        name, birthdate, gender, phone, cep, address, numero, email, login, password, unit, team, area,
+        name, motherName, cpf, birthdate, gender, phone, cep, address, numero, email, login, password, unit, team, area,
         familias: 0,
         visitas: 0,
         consultas: 0
@@ -1015,7 +1327,7 @@
         const idx = Number(cadastroEditIndex);
         const loginConflito = agentes.some((a, i) => a.login === login && i !== idx);
         if (loginConflito) {
-          alert('Este nome de usuário (login) já está em uso.');
+          mostrarToast('Este nome de usuário (login) já está em uso.', 'error');
           return false;
         }
 
@@ -1025,20 +1337,20 @@
 
         agentes[idx] = novoAgente;
         localStorage.setItem('agentes', JSON.stringify(agentes));
-        alert('Cadastro atualizado com sucesso!');
+        mostrarToast('Cadastro atualizado com sucesso!', 'success');
         fecharCadastro();
         renderizarAgentes();
         return false;
       }
 
       if (agentes.some(a => a.login === login)) {
-        alert('Este nome de usuário (login) já está em uso.');
+        mostrarToast('Este nome de usuário (login) já está em uso.', 'error');
         return false;
       }
 
       agentes.push(novoAgente);
       localStorage.setItem('agentes', JSON.stringify(agentes));
-      alert('Agente comunitário cadastrado com sucesso!');
+      mostrarToast('Agente comunitário cadastrado com sucesso!', 'success');
       fecharCadastro();
       renderizarAgentes();
       return false;
