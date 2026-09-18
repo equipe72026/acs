@@ -86,13 +86,16 @@
             <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Minhas Famílias</p>
           </a>
           
-          <div class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm">
-            <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center mb-3">
-              <i data-lucide="calendar" class="text-amber-400"></i>
+          <a href="#appointments" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-amber-500/50 hover:bg-slate-800 transition-all cursor-pointer block group">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
+                <i data-lucide="calendar" class="text-amber-400"></i>
+              </div>
+              <i data-lucide="chevron-right" class="text-slate-600 group-hover:text-amber-400 transition-colors" style="width:16px;height:16px;"></i>
             </div>
             <p class="text-3xl font-800 text-white" id="acsConsultas">0</p>
-            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Consultas</p>
-          </div>
+            <p class="text-xs text-slate-400 uppercase tracking-wider font-700 mt-1">Consultas Agendadas</p>
+          </a>
 
           <button onclick="abrirVisitasPendentes()" class="bg-slate-900 rounded-2xl p-5 border border-white/10 shadow-sm hover:border-red-500/50 hover:bg-slate-800 transition-all cursor-pointer block group w-full text-left">
             <div class="flex items-center justify-between mb-3">
@@ -233,11 +236,109 @@
         <div class="space-y-3" id="listaFamiliasContainer"></div>
       </section>
 
-      <section id="appointments" class="content-section hidden space-y-4">
-        <h2 class="text-2xl font-800 text-white tracking-tight">Consultas</h2>
-        <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
-          Nenhuma consulta agendada para hoje.
+      <section id="appointments" class="content-section hidden space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-800 text-white tracking-tight">Consultas</h2>
+            <p class="text-slate-400 text-sm mt-1">Todas as famílias cadastradas na sua microárea. Agende a data da consulta de cada paciente.</p>
+          </div>
+          <div class="flex gap-2 self-start sm:self-auto flex-shrink-0 flex-wrap">
+            <button id="btnConsTodas" onclick="filtrarConsultas('todas')" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-emerald-600 border-emerald-600 text-white">
+              <i data-lucide="list" style="width:14px;height:14px;"></i> Todos
+            </button>
+            <button id="btnConsAgendar" onclick="filtrarConsultas('agendar')" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+              <i data-lucide="calendar-plus" style="width:14px;height:14px;"></i> A agendar
+            </button>
+            <button id="btnConsAgendado" onclick="filtrarConsultas('agendado')" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+              <i data-lucide="calendar-check" style="width:14px;height:14px;"></i> Agendados
+            </button>
+          </div>
         </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-900 rounded-2xl p-4 border border-white/10">
+            <p class="text-2xl font-800 text-white" id="consTotalPacientes">0</p>
+            <p class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-700 mt-0.5">Pacientes</p>
+          </div>
+          <div class="bg-slate-900 rounded-2xl p-4 border border-amber-500/20">
+            <p class="text-2xl font-800 text-amber-400" id="consTotalAgendar">0</p>
+            <p class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-700 mt-0.5">A agendar</p>
+          </div>
+          <div class="bg-slate-900 rounded-2xl p-4 border border-emerald-500/20">
+            <p class="text-2xl font-800 text-emerald-400" id="consTotalAgendados">0</p>
+            <p class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-700 mt-0.5">Agendados</p>
+          </div>
+        </div>
+
+        <div class="relative">
+          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" style="width:16px;height:16px;"></i>
+          <input type="text" id="buscaConsulta" oninput="carregarPainelConsultas()" placeholder="Buscar por paciente, responsável, prontuário ou rua..." class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-950 border border-white/10 text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+        </div>
+
+        <div id="consultaFormContainer" class="bg-slate-900 rounded-2xl border border-white/10 p-6 hidden space-y-4">
+          <h3 id="consultaFormTitle" class="text-lg font-800 text-white flex items-center gap-2">
+            <i data-lucide="calendar-plus" class="text-emerald-400"></i> Agendar Consulta
+          </h3>
+          <p class="text-xs text-slate-400 -mt-2" id="consultaFormSubtitulo"></p>
+
+          <form id="consultaForm" onsubmit="salvarConsulta(event)" class="space-y-4">
+            <input type="hidden" id="consultaProntuario" value="">
+            <input type="hidden" id="consultaMembroIdx" value="">
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label for="consultaStatus" class="block text-xs font-600 text-slate-300 mb-1">Status *</label>
+                <select id="consultaStatus" onchange="ajustarCamposConsulta()" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                  <option value="agendado">Agendado (com data definida)</option>
+                  <option value="agendar">A agendar (aguardando vaga)</option>
+                </select>
+              </div>
+              <div>
+                <label for="consultaData" class="block text-xs font-600 text-slate-300 mb-1">Data da Consulta <span id="consultaDataObrig">*</span></label>
+                <input type="date" id="consultaData" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+              </div>
+              <div>
+                <label for="consultaHora" class="block text-xs font-600 text-slate-300 mb-1">Horário</label>
+                <input type="time" id="consultaHora" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="consultaTipo" class="block text-xs font-600 text-slate-300 mb-1">Tipo de Atendimento *</label>
+                <select id="consultaTipo" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+                  <option value="Clínica Geral">Clínica Geral</option>
+                  <option value="Enfermagem">Enfermagem</option>
+                  <option value="Odontologia">Odontologia</option>
+                  <option value="Pré-natal">Pré-natal</option>
+                  <option value="Puericultura">Puericultura (criança)</option>
+                  <option value="Hiperdia (Hipertensão/Diabetes)">Hiperdia (Hipertensão/Diabetes)</option>
+                  <option value="Saúde Mental">Saúde Mental</option>
+                  <option value="Exames / Coleta">Exames / Coleta</option>
+                  <option value="Vacinação">Vacinação</option>
+                  <option value="Encaminhamento a Especialista">Encaminhamento a Especialista</option>
+                </select>
+              </div>
+              <div>
+                <label for="consultaLocal" class="block text-xs font-600 text-slate-300 mb-1">Local / Unidade</label>
+                <input type="text" id="consultaLocal" placeholder="Ex: UBS Central" class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              </div>
+            </div>
+
+            <div>
+              <label for="consultaObs" class="block text-xs font-600 text-slate-300 mb-1">Observações</label>
+              <textarea id="consultaObs" rows="2" placeholder="Ex: paciente precisa de transporte, levar cartão SUS..." class="w-full px-3 py-2 bg-slate-950 border border-white/10 rounded-xl text-white placeholder:text-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" onclick="fecharFormConsulta()" class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-600 text-xs transition-colors">Cancelar</button>
+              <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-700 text-xs transition-colors">Salvar Agendamento</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="space-y-3" id="listaConsultasFamilias"></div>
       </section>
 
       <section id="visits" class="content-section hidden space-y-6">
@@ -766,6 +867,8 @@
         }
       } else if (hash === '#visits') {
         carregarPainelVisitas();
+      } else if (hash === '#appointments') {
+        carregarPainelConsultas();
       }
     }
 
@@ -1391,6 +1494,320 @@
       carregarPainelVisitas();
     }
 
+
+    /* ═══ AGENDA DE CONSULTAS ══════════════════════════════════════════ */
+    // Registro salvo em localStorage['consultas_agenda']:
+    // { agenteLogin, prontuario, membroIdx, paciente, status: 'agendado'|'agendar',
+    //   data, hora, tipo, local, obs, criadoEm }
+
+    let _filtroConsultas = 'todas';
+
+    function getConsultas() {
+      return JSON.parse(localStorage.getItem('consultas_agenda')) || [];
+    }
+
+    function setConsultas(lista) {
+      localStorage.setItem('consultas_agenda', JSON.stringify(lista));
+    }
+
+    function buscarConsulta(prontuario, membroIdx) {
+      return getConsultas().find(c =>
+        c.prontuario === prontuario && Number(c.membroIdx) === Number(membroIdx)
+      ) || null;
+    }
+
+    // Status do paciente: 'agendado' (tem data marcada) ou 'agendar' (pendente)
+    function statusPaciente(prontuario, membroIdx) {
+      const c = buscarConsulta(prontuario, membroIdx);
+      return (c && c.status === 'agendado' && c.data) ? 'agendado' : 'agendar';
+    }
+
+    function atualizarContadorConsultas() {
+      if (!sessaoAtiva) return 0;
+      const agendadas = getConsultas().filter(c =>
+        c.agenteLogin === sessaoAtiva.login && c.status === 'agendado' && c.data
+      ).length;
+
+      const el = document.getElementById('acsConsultas');
+      if (el) el.innerText = agendadas;
+
+      sessaoAtiva.consultas = agendadas;
+      localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      const idx = agentes.findIndex(a => a.login === sessaoAtiva.login);
+      if (idx !== -1) {
+        agentes[idx].consultas = agendadas;
+        localStorage.setItem('agentes', JSON.stringify(agentes));
+      }
+      return agendadas;
+    }
+
+    function filtrarConsultas(filtro) {
+      _filtroConsultas = filtro;
+      carregarPainelConsultas();
+    }
+
+    function fmtData(d) {
+      return d ? d.split('-').reverse().join('/') : '';
+    }
+
+    function carregarPainelConsultas() {
+      if (!sessaoAtiva) return;
+
+      const familiasGerais = JSON.parse(localStorage.getItem('familias')) || [];
+      const minhasFamilias = familiasGerais.filter(f => f.agenteLogin === sessaoAtiva.login);
+      const container = document.getElementById('listaConsultasFamilias');
+      const termo = (document.getElementById('buscaConsulta').value || '').toLowerCase().trim();
+
+      // Botões de filtro
+      const ativo = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-emerald-600 border-emerald-600 text-white';
+      const inativo = 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10';
+      document.getElementById('btnConsTodas').className = _filtroConsultas === 'todas' ? ativo : inativo;
+      document.getElementById('btnConsAgendar').className = _filtroConsultas === 'agendar'
+        ? 'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-700 transition-colors border bg-amber-500 border-amber-500 text-white' : inativo;
+      document.getElementById('btnConsAgendado').className = _filtroConsultas === 'agendado' ? ativo : inativo;
+
+      // Totais gerais (sem filtro)
+      let totalPacientes = 0, totalAgendados = 0;
+      minhasFamilias.forEach(f => {
+        (f.membros || []).forEach((m, i) => {
+          totalPacientes++;
+          if (statusPaciente(f.prontuario, i) === 'agendado') totalAgendados++;
+        });
+      });
+      document.getElementById('consTotalPacientes').innerText = totalPacientes;
+      document.getElementById('consTotalAgendados').innerText = totalAgendados;
+      document.getElementById('consTotalAgendar').innerText = totalPacientes - totalAgendados;
+
+      if (minhasFamilias.length === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
+            <i data-lucide="users" class="text-slate-600 mx-auto mb-2" style="width:28px;height:28px;"></i>
+            <p class="font-700 text-white text-sm">Nenhuma família cadastrada</p>
+            <p class="text-xs mt-1">Cadastre famílias na aba "Famílias" para começar a agendar consultas.</p>
+          </div>`;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = '';
+      let cardsRenderizados = 0;
+
+      minhasFamilias.forEach(fam => {
+        const membros = fam.membros || [];
+
+        // Filtro por status + busca textual
+        const membrosVisiveis = membros
+          .map((m, i) => ({ m, i, status: statusPaciente(fam.prontuario, i) }))
+          .filter(x => _filtroConsultas === 'todas' || x.status === _filtroConsultas)
+          .filter(x => {
+            if (!termo) return true;
+            const alvo = `${x.m.nome || ''} ${fam.responsavel || ''} ${fam.prontuario} ${fam.logradouro || ''} ${fam.bairro || ''}`.toLowerCase();
+            return alvo.includes(termo);
+          });
+
+        if (membrosVisiveis.length === 0) return;
+        cardsRenderizados++;
+
+        const agendadosFam = membros.filter((m, i) => statusPaciente(fam.prontuario, i) === 'agendado').length;
+        const pendentesFam = membros.length - agendadosFam;
+
+        const cardsMembros = membrosVisiveis.map(({ m, i, status }) => {
+          const c = buscarConsulta(fam.prontuario, i);
+          const agendado = status === 'agendado';
+
+          const badge = agendado
+            ? `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[9px] font-800 uppercase px-2 py-0.5 rounded-lg flex items-center gap-1 flex-shrink-0"><i data-lucide="check" style="width:10px;height:10px;"></i> Agendado</span>`
+            : `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-800 uppercase px-2 py-0.5 rounded-lg flex items-center gap-1 flex-shrink-0"><span class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span> Agendar</span>`;
+
+          const detalhe = agendado
+            ? `<div class="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-2 space-y-0.5">
+                 <p class="text-[11px] font-800 text-emerald-300 flex items-center gap-1.5">
+                   <i data-lucide="calendar-check" style="width:12px;height:12px;"></i>
+                   ${fmtData(c.data)}${c.hora ? ' às ' + c.hora : ''}
+                 </p>
+                 <p class="text-[10px] text-slate-400">${c.tipo || 'Consulta'}${c.local ? ' — ' + c.local : ''}</p>
+                 ${c.obs ? `<p class="text-[10px] text-slate-500 italic">"${c.obs}"</p>` : ''}
+               </div>`
+            : `<div class="bg-white/[0.02] border border-white/5 rounded-lg p-2">
+                 <p class="text-[10px] text-slate-500 italic">
+                   ${c && c.obs ? c.obs : 'Sem data definida. Clique em "Agendar consulta" para marcar.'}
+                 </p>
+               </div>`;
+
+          const botoes = agendado
+            ? `<div class="flex gap-2">
+                 <button onclick="abrirFormConsulta('${fam.prontuario}', ${i})" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-700 bg-white/5 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-white/10 transition-all">
+                   <i data-lucide="pencil" style="width:12px;height:12px;"></i> Reagendar
+                 </button>
+                 <button onclick="cancelarConsulta('${fam.prontuario}', ${i})" class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-700 bg-red-500/10 hover:bg-red-500/30 text-red-400 border border-red-500/20 transition-all">
+                   <i data-lucide="calendar-x" style="width:12px;height:12px;"></i> Cancelar
+                 </button>
+               </div>`
+            : `<button onclick="abrirFormConsulta('${fam.prontuario}', ${i})" class="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-700 bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-sm">
+                 <i data-lucide="calendar-plus" style="width:12px;height:12px;"></i> Agendar consulta
+               </button>`;
+
+          return `
+            <div class="bg-white/[0.02] border border-white/5 p-3 rounded-lg flex flex-col justify-between gap-2">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="font-700 text-slate-200 text-xs truncate">${m.nome || 'Sem nome'}</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">
+                    ${m.nascimento ? 'Nasc.: ' + fmtData(m.nascimento) : ''}${m.sus ? ' | SUS: ' + m.sus : ''}
+                  </p>
+                </div>
+                ${badge}
+              </div>
+              ${detalhe}
+              ${botoes}
+            </div>`;
+        }).join('');
+
+        container.innerHTML += `
+          <div class="bg-slate-900 rounded-2xl p-5 border border-white/10 space-y-3">
+            <div class="border-b border-white/5 pb-3">
+              <div class="flex items-start justify-between gap-2 flex-wrap">
+                <h3 class="font-800 text-white text-base flex items-center gap-2 flex-wrap">
+                  ${fam.responsavel}
+                  <span class="text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg font-700 tracking-wide">Nº ${fam.prontuario}</span>
+                </h3>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-800 uppercase px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${agendadosFam} agendado(s)</span>
+                  <span class="text-[10px] font-800 uppercase px-2 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">${pendentesFam} a agendar</span>
+                </div>
+              </div>
+              <p class="text-xs text-slate-400 mt-1 flex items-center gap-1 flex-wrap">
+                <i data-lucide="map-pin" style="width:13px;height:13px;" class="text-emerald-400"></i>
+                ${fam.logradouro}, Nº ${fam.numCasa} — Bairro: ${fam.bairro} — ${fam.cidade} / ${fam.uf}
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${cardsMembros}
+            </div>
+          </div>`;
+      });
+
+      if (cardsRenderizados === 0) {
+        container.innerHTML = `
+          <div class="bg-slate-900 rounded-xl p-8 text-center text-slate-400 border border-white/10">
+            <i data-lucide="search-x" class="text-slate-600 mx-auto mb-2" style="width:28px;height:28px;"></i>
+            <p class="font-700 text-white text-sm">Nenhum paciente encontrado</p>
+            <p class="text-xs mt-1">Ajuste a busca ou troque o filtro de status.</p>
+          </div>`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function ajustarCamposConsulta() {
+      const agendado = document.getElementById('consultaStatus').value === 'agendado';
+      const campoData = document.getElementById('consultaData');
+      campoData.required = agendado;
+      document.getElementById('consultaDataObrig').innerText = agendado ? '*' : '(opcional)';
+    }
+
+    function abrirFormConsulta(prontuario, membroIdx) {
+      const familias = JSON.parse(localStorage.getItem('familias')) || [];
+      const fam = familias.find(f => f.prontuario === prontuario);
+      if (!fam) return;
+      const membro = (fam.membros || [])[membroIdx];
+      if (!membro) return;
+
+      const existente = buscarConsulta(prontuario, membroIdx);
+
+      document.getElementById('consultaProntuario').value = prontuario;
+      document.getElementById('consultaMembroIdx').value = membroIdx;
+
+      document.getElementById('consultaFormTitle').innerHTML = existente && existente.status === 'agendado'
+        ? `<i data-lucide="pencil" class="text-amber-400"></i> Reagendar Consulta`
+        : `<i data-lucide="calendar-plus" class="text-emerald-400"></i> Agendar Consulta`;
+
+      document.getElementById('consultaFormSubtitulo').innerText =
+        `Paciente: ${membro.nome || 'Sem nome'} — Família de ${fam.responsavel} (Prontuário Nº ${fam.prontuario})`;
+
+      document.getElementById('consultaStatus').value = existente ? existente.status : 'agendado';
+      document.getElementById('consultaData').value = (existente && existente.data) ? existente.data : new Date().toISOString().split('T')[0];
+      document.getElementById('consultaHora').value = (existente && existente.hora) ? existente.hora : '';
+      document.getElementById('consultaTipo').value = (existente && existente.tipo) ? existente.tipo : 'Clínica Geral';
+      document.getElementById('consultaLocal').value = (existente && existente.local) ? existente.local : (sessaoAtiva.unit || '');
+      document.getElementById('consultaObs').value = (existente && existente.obs) ? existente.obs : '';
+
+      ajustarCamposConsulta();
+
+      const box = document.getElementById('consultaFormContainer');
+      box.classList.remove('hidden');
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      lucide.createIcons();
+    }
+
+    function fecharFormConsulta() {
+      document.getElementById('consultaFormContainer').classList.add('hidden');
+    }
+
+    function salvarConsulta(event) {
+      event.preventDefault();
+
+      const prontuario = document.getElementById('consultaProntuario').value;
+      const membroIdx = Number(document.getElementById('consultaMembroIdx').value);
+      const status = document.getElementById('consultaStatus').value;
+      const data = document.getElementById('consultaData').value;
+      const hora = document.getElementById('consultaHora').value;
+      const tipo = document.getElementById('consultaTipo').value;
+      const local = document.getElementById('consultaLocal').value;
+      const obs = document.getElementById('consultaObs').value;
+
+      if (status === 'agendado' && !data) {
+        mostrarToast('Informe a data da consulta para marcar como agendada.', 'warning');
+        return;
+      }
+
+      const familias = JSON.parse(localStorage.getItem('familias')) || [];
+      const fam = familias.find(f => f.prontuario === prontuario);
+      const paciente = fam && fam.membros[membroIdx] ? fam.membros[membroIdx].nome : '';
+
+      const registro = {
+        agenteLogin: sessaoAtiva.login,
+        prontuario, membroIdx, paciente,
+        status,
+        data: status === 'agendado' ? data : '',
+        hora: status === 'agendado' ? hora : '',
+        tipo, local, obs,
+        criadoEm: new Date().toISOString()
+      };
+
+      const lista = getConsultas();
+      const idx = lista.findIndex(c => c.prontuario === prontuario && Number(c.membroIdx) === membroIdx);
+      if (idx !== -1) lista[idx] = registro; else lista.push(registro);
+      setConsultas(lista);
+
+      mostrarToast(
+        status === 'agendado'
+          ? `Consulta de ${paciente || 'paciente'} agendada para ${fmtData(data)}${hora ? ' às ' + hora : ''}.`
+          : `Paciente ${paciente || ''} marcado como "a agendar".`,
+        status === 'agendado' ? 'success' : 'info'
+      );
+
+      fecharFormConsulta();
+      atualizarContadorConsultas();
+      carregarPainelConsultas();
+    }
+
+    function cancelarConsulta(prontuario, membroIdx) {
+      const c = buscarConsulta(prontuario, membroIdx);
+      if (!c) return;
+      if (!confirm(`Cancelar a consulta de "${c.paciente || 'paciente'}" marcada para ${fmtData(c.data)}?\n\nO paciente voltará para o status "Agendar".`)) return;
+
+      setConsultas(getConsultas().filter(x =>
+        !(x.prontuario === prontuario && Number(x.membroIdx) === Number(membroIdx))
+      ));
+
+      mostrarToast('Agendamento cancelado. Paciente voltou para "Agendar".', 'warning');
+      atualizarContadorConsultas();
+      carregarPainelConsultas();
+    }
+
     window.addEventListener('hashchange', updateNavigation);
     
     function excluirFamilia(prontuario, responsavel) {
@@ -1401,6 +1818,8 @@
       let visitas = JSON.parse(localStorage.getItem('visitas_historico')) || [];
       visitas = visitas.filter(v => v.prontuario !== prontuario);
       localStorage.setItem('visitas_historico', JSON.stringify(visitas));
+      setConsultas(getConsultas().filter(c => c.prontuario !== prontuario));
+      atualizarContadorConsultas();
       const minhasFamilias = familias.filter(f => f.agenteLogin === sessaoAtiva.login);
       sessaoAtiva.familias = minhasFamilias.length;
       localStorage.setItem('agente_sessao', JSON.stringify(sessaoAtiva));
@@ -1443,7 +1862,7 @@
       document.getElementById('nomeAcsSide').innerText = sessaoAtiva.name;
       document.getElementById('nomeUnidadeSide').innerText = sessaoAtiva.unit;
       
-      document.getElementById('acsConsultas').innerText = sessaoAtiva.consultas || 0;
+      atualizarContadorConsultas();
       document.getElementById('acsVisitas').innerText = sessaoAtiva.visitas || 0;
       calcularVisitasPendentes();
 

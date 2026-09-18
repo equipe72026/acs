@@ -183,8 +183,9 @@
             </div>
             <!-- Nome da mãe — linha inteira -->
             <div>
-              <label for="motherName" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Nome da mãe *</label>
-              <input type="text" id="motherName" placeholder="Nome completo da mãe" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              <label for="motherName" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Primeiro nome da mãe *</label>
+              <input type="text" id="motherName" placeholder="Apenas o primeiro nome. Ex: Maria" oninput="apenasPrimeiroNome(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              <div class="error-message">Informe apenas o primeiro nome da mãe</div>
             </div>
             <!-- CPF + Nascimento + Sexo -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -515,6 +516,20 @@
         </button>
       </div>
 
+      <!-- Meus Dados (exclusivo de quem logou como gerente) -->
+      <div id="opcaoMeusDados" class="hidden bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <i data-lucide="user-round" style="width:18px;height:18px;" class="text-slate-500 dark:text-slate-400"></i>
+          <div>
+            <p class="text-sm font-700 text-slate-800 dark:text-white">Meus Dados</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Atualize seu cadastro e sua senha de gerente</p>
+          </div>
+        </div>
+        <button onclick="fecharOpcoes(); abrirMeusDados()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-xs transition-colors">
+          Editar
+        </button>
+      </div>
+
       <!-- Cadastro de Gerentes (exclusivo do admin) -->
       <div class="so-admin bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -555,34 +570,249 @@
     </div>
   </div>
 
+  <!-- Modal Meus Dados (gerente edita o proprio cadastro) -->
+  <div id="modalMeusDados" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-100 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+            <i data-lucide="user-round" style="width:18px;height:18px;" class="text-emerald-500 dark:text-emerald-400"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-800 text-slate-900 dark:text-white">Meus Dados</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Atualize suas informações de cadastro e acesso</p>
+          </div>
+        </div>
+        <button onclick="fecharMeusDados()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <form id="meusDadosForm" onsubmit="return salvarMeusDados(event)" class="space-y-6">
+
+        <!-- Bloco 1: Dados Pessoais -->
+        <div>
+          <p class="text-[10px] font-800 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">Dados Pessoais</p>
+          <div class="space-y-3">
+            <div>
+              <label for="mdName" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Nome completo *</label>
+              <input type="text" id="mdName" placeholder="Mínimo 15 caracteres" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required minlength="15">
+              <div class="error-message">O nome deve ter no mínimo 15 caracteres</div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="mdCpf" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">CPF *</label>
+                <input type="text" id="mdCpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                <div class="error-message">CPF inválido (11 dígitos)</div>
+              </div>
+              <div>
+                <label for="mdBirthdate" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Data de Nascimento *</label>
+                <input type="text" id="mdBirthdate" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskDate(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              </div>
+              <div>
+                <label for="mdGender" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Sexo *</label>
+                <select id="mdGender" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all [&>option]:text-black [&>option]:bg-white" required>
+                  <option value="">Selecione</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Feminino</option>
+                  <option value="O">Outro</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="mdPhone" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Celular *</label>
+                <input type="tel" id="mdPhone" oninput="maskPhone(this)" maxlength="15" placeholder="(XX) XXXXX-XXXX" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                <div class="error-message">Formato obrigatório: (XX) XXXXX-XXXX</div>
+              </div>
+              <div>
+                <label for="mdEmail" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Email *</label>
+                <input type="email" id="mdEmail" placeholder="seu.email@exemplo.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                <div class="error-message">Email inválido</div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <div>
+                <label for="mdCep" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+                  <span>CEP *</span>
+                  <span id="mdCepStatus" class="text-[10px] font-700 text-slate-400 italic">Busca automática</span>
+                </label>
+                <input type="text" id="mdCep" placeholder="00000-000" maxlength="9" oninput="maskCepMeusDados(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all font-700 tracking-wide text-center" required>
+              </div>
+              <div class="sm:col-span-2">
+                <label for="mdAddress" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Endereço *</label>
+                <input type="text" id="mdAddress" placeholder="Rua, bairro..." class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              </div>
+              <div>
+                <label for="mdNumero" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Número *</label>
+                <input type="text" id="mdNumero" placeholder="Ex: 145" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divisor -->
+        <div class="border-t border-slate-200 dark:border-white/5"></div>
+
+        <!-- Bloco 2: Acesso -->
+        <div>
+          <p class="text-[10px] font-800 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">Acesso ao Sistema</p>
+          <div class="space-y-3">
+            <div>
+              <label for="mdLogin" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Login *</label>
+              <input type="text" id="mdLogin" placeholder="Nome de usuário para login" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="mdPassword" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Senha *</label>
+                <input type="password" id="mdPassword" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required minlength="6">
+              </div>
+              <div>
+                <label for="mdConfirmPassword" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Confirmar Senha *</label>
+                <input type="password" id="mdConfirmPassword" placeholder="Confirme a senha" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                <div class="error-message">As senhas devem ser iguais</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button type="button" onclick="fecharMeusDados()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-700 text-sm transition-all text-center">Cancelar</button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all duration-200 transform hover:scale-105">Salvar Alterações</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Gerentes (cadastro exclusivo do admin) -->
   <div id="modalGerentes" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-100 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 max-w-md w-full space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto space-y-5">
+
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-800 text-slate-900 dark:text-white">Gerentes</h3>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+            <i data-lucide="shield-check" style="width:18px;height:18px;" class="text-emerald-500 dark:text-emerald-400"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-800 text-slate-900 dark:text-white">Gerentes</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Cadastro e gestão dos gerentes do sistema</p>
+          </div>
+        </div>
         <button onclick="fecharGerentes()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
           <i data-lucide="x" style="width:20px;height:20px;"></i>
         </button>
       </div>
+
       <p class="text-xs text-slate-500 dark:text-slate-400">Gerentes cadastrados têm acesso total ao painel, exceto a permissão de cadastrar novos gerentes — isso é exclusivo do admin.</p>
 
       <div id="listaGerentes" class="space-y-2"></div>
 
-      <div class="border-t border-slate-200 dark:border-white/10 pt-4 space-y-3">
-        <p class="text-sm font-700 text-slate-800 dark:text-white">Cadastrar novo gerente</p>
-        <div>
-          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Nome</label>
-          <input type="text" id="nomeGerente" placeholder="Nome do gerente" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
+      <div class="border-t border-slate-200 dark:border-white/10 pt-4">
+        <div class="flex items-center justify-between mb-3">
+          <p id="tituloFormGerente" class="text-sm font-700 text-slate-800 dark:text-white">Cadastrar novo gerente</p>
+          <button type="button" id="btnCancelarEdicaoGerente" onclick="novoFormGerente()" class="hidden text-[11px] font-700 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition-colors">
+            <i data-lucide="plus" style="width:12px;height:12px;"></i> Novo cadastro
+          </button>
         </div>
-        <div>
-          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Usuário</label>
-          <input type="text" id="loginGerente" placeholder="Ex: joao.gerente" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-700 uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Senha</label>
-          <input type="password" id="senhaGerenteNovo" placeholder="Mínimo 4 caracteres" class="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 text-sm">
-        </div>
-        <button onclick="cadastrarGerente()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-colors">Cadastrar Gerente</button>
+
+        <form id="gerenteForm" onsubmit="return validarFormGerente(event)" class="space-y-6">
+
+          <!-- Bloco 1: Dados Pessoais -->
+          <div>
+            <p class="text-[10px] font-800 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">Dados Pessoais</p>
+            <div class="space-y-3">
+              <div>
+                <label for="gName" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Nome completo *</label>
+                <input type="text" id="gName" placeholder="Mínimo 15 caracteres" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required minlength="15">
+                <div class="error-message">O nome deve ter no mínimo 15 caracteres</div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label for="gCpf" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">CPF *</label>
+                  <input type="text" id="gCpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                  <div class="error-message">CPF inválido (11 dígitos)</div>
+                </div>
+                <div>
+                  <label for="gBirthdate" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Data de Nascimento *</label>
+                  <input type="text" id="gBirthdate" placeholder="DD/MM/AAAA" maxlength="10" oninput="maskDate(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                </div>
+                <div>
+                  <label for="gGender" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Sexo *</label>
+                  <select id="gGender" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all [&>option]:text-black [&>option]:bg-white" required>
+                    <option value="">Selecione</option>
+                    <option value="M">Masculino</option>
+                    <option value="F">Feminino</option>
+                    <option value="O">Outro</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="gPhone" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Celular *</label>
+                  <input type="tel" id="gPhone" oninput="maskPhone(this)" maxlength="15" placeholder="(XX) XXXXX-XXXX" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                  <div class="error-message">Formato obrigatório: (XX) XXXXX-XXXX</div>
+                </div>
+                <div>
+                  <label for="gEmail" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Email *</label>
+                  <input type="email" id="gEmail" placeholder="seu.email@exemplo.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                  <div class="error-message">Email inválido</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div>
+                  <label for="gCep" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1 flex items-center justify-between">
+                    <span>CEP *</span>
+                    <span id="gCepStatus" class="text-[10px] font-700 text-slate-400 italic">Busca automática</span>
+                  </label>
+                  <input type="text" id="gCep" placeholder="00000-000" maxlength="9" oninput="maskCepGerente(this)" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all font-700 tracking-wide text-center" required>
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="gAddress" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Endereço *</label>
+                  <input type="text" id="gAddress" placeholder="Rua, bairro..." class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                </div>
+                <div>
+                  <label for="gNumero" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Número *</label>
+                  <input type="text" id="gNumero" placeholder="Ex: 145" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divisor -->
+          <div class="border-t border-slate-200 dark:border-white/5"></div>
+
+          <!-- Bloco 2: Acesso -->
+          <div>
+            <p class="text-[10px] font-800 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">Acesso ao Sistema</p>
+            <div class="space-y-3">
+              <div>
+                <label for="gLogin" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Login *</label>
+                <input type="text" id="gLogin" placeholder="Ex: joao.gerente" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="gPassword" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Senha *</label>
+                  <input type="password" id="gPassword" placeholder="Mínimo 6 caracteres" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required minlength="6">
+                </div>
+                <div>
+                  <label for="gConfirmPassword" class="block text-xs font-600 text-slate-600 dark:text-slate-300 mb-1">Confirmar Senha *</label>
+                  <input type="password" id="gConfirmPassword" placeholder="Confirme a senha" class="w-full px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm transition-all" required>
+                  <div class="error-message">As senhas devem ser iguais</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botões -->
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button type="button" onclick="fecharGerentes()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-700 text-sm transition-all text-center">Fechar</button>
+            <button type="submit" id="btnSubmitGerente" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-700 text-sm transition-all duration-200 transform hover:scale-105">Cadastrar Gerente</button>
+          </div>
+
+        </form>
       </div>
     </div>
   </div>
@@ -659,6 +889,11 @@
       if (sessaoGerencial.tipo !== 'admin') {
         document.querySelectorAll('.so-admin').forEach(el => el.classList.add('hidden'));
       }
+
+      if (sessaoGerencial.tipo === 'gerente') {
+        const opcao = document.getElementById('opcaoMeusDados');
+        if (opcao) opcao.classList.remove('hidden');
+      }
       return true;
     }
 
@@ -723,17 +958,189 @@
       fecharModalSenha();
     }
 
+    // ── Meus Dados (gerente logado edita o proprio cadastro) ──
+    function abrirMeusDados() {
+      if (!sessaoGerencial || sessaoGerencial.tipo !== 'gerente') return;
+
+      const gerentes = obterGerentes();
+      const idx = gerentes.findIndex(g => g.login === sessaoGerencial.usuario);
+      const g = gerentes[idx];
+      if (!g) {
+        mostrarToast('Não foi possível localizar seu cadastro de gerente.', 'error');
+        return;
+      }
+
+      document.querySelectorAll('#modalMeusDados .show-error').forEach(el => el.classList.remove('show-error'));
+
+      document.getElementById('mdName').value = g.nome || '';
+      document.getElementById('mdCpf').value = g.cpf || '';
+      document.getElementById('mdBirthdate').value = g.birthdate || '';
+      document.getElementById('mdGender').value = g.gender || '';
+      document.getElementById('mdPhone').value = g.phone || '';
+      document.getElementById('mdEmail').value = g.email || '';
+      document.getElementById('mdCep').value = g.cep || '';
+      document.getElementById('mdAddress').value = g.address || '';
+      document.getElementById('mdNumero').value = g.numero || '';
+      document.getElementById('mdLogin').value = g.login || '';
+      document.getElementById('mdPassword').value = g.senha || '';
+      document.getElementById('mdConfirmPassword').value = g.senha || '';
+      document.getElementById('mdCepStatus').innerText = 'Busca automática';
+      document.getElementById('mdCepStatus').className = 'text-[10px] font-700 text-slate-400 italic';
+
+      document.getElementById('modalMeusDados').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharMeusDados() {
+      document.getElementById('modalMeusDados').classList.add('hidden');
+    }
+
+    function maskCepMeusDados(input) {
+      let v = input.value.replace(/\D/g, '').slice(0, 8);
+      if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+      input.value = v;
+      if (v.replace('-', '').length === 8) buscarCepMeusDados(v.replace('-', ''));
+    }
+
+    function buscarCepMeusDados(cepLimpo) {
+      const status = document.getElementById('mdCepStatus');
+      status.innerText = 'Buscando...';
+      status.className = 'text-[10px] font-700 text-amber-400 animate-pulse';
+      fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.erro) {
+            status.innerText = 'CEP não encontrado';
+            status.className = 'text-[10px] font-700 text-red-400';
+            return;
+          }
+          const partes = [data.logradouro, data.bairro, data.localidade, data.uf].filter(Boolean);
+          document.getElementById('mdAddress').value = partes.join(', ');
+          status.innerText = 'Encontrado!';
+          status.className = 'text-[10px] font-700 text-emerald-400';
+          document.getElementById('mdNumero').focus();
+        })
+        .catch(() => {
+          status.innerText = 'Erro na busca';
+          status.className = 'text-[10px] font-700 text-red-400';
+        });
+    }
+
+    function salvarMeusDados(event) {
+      event.preventDefault();
+
+      const gerentes = obterGerentes();
+      const idx = gerentes.findIndex(g => g.login === sessaoGerencial.usuario);
+      if (idx === -1) {
+        mostrarToast('Não foi possível localizar seu cadastro de gerente.', 'error');
+        return false;
+      }
+
+      const nome = document.getElementById('mdName').value.trim();
+      const cpf = document.getElementById('mdCpf').value.trim();
+      const birthdate = document.getElementById('mdBirthdate').value.trim();
+      const gender = document.getElementById('mdGender').value;
+      const phone = document.getElementById('mdPhone').value;
+      const email = document.getElementById('mdEmail').value.trim();
+      const cep = document.getElementById('mdCep').value;
+      const address = document.getElementById('mdAddress').value.trim();
+      const numero = document.getElementById('mdNumero').value.trim();
+      const login = document.getElementById('mdLogin').value.trim();
+      const senha = document.getElementById('mdPassword').value;
+      const confirmarSenha = document.getElementById('mdConfirmPassword').value;
+
+      let isValid = true;
+
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      if (cpfLimpo.length !== 11) {
+        document.getElementById('mdCpf').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('mdCpf').classList.remove('show-error');
+      }
+
+      if (senha !== confirmarSenha) {
+        document.getElementById('mdConfirmPassword').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('mdConfirmPassword').classList.remove('show-error');
+      }
+
+      const phoneRegex = /^\(\d{2}\)\s\d{5}-\d{4}$/;
+      if (!phoneRegex.test(phone)) {
+        document.getElementById('mdPhone').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('mdPhone').classList.remove('show-error');
+      }
+
+      if (!birthdate) {
+        mostrarToast('Informe a data de nascimento.', 'error');
+        return false;
+      }
+
+      if (senha.length < 6) {
+        mostrarToast('A senha deve ter no mínimo 6 caracteres.', 'error');
+        return false;
+      }
+
+      if (!isValid) return false;
+
+      if (login === 'admin') {
+        mostrarToast('Este nome de usuário é reservado para o admin.', 'error');
+        return false;
+      }
+
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      if (agentes.some(a => a.login === login)) {
+        mostrarToast('Este nome de usuário já está em uso por um agente.', 'error');
+        return false;
+      }
+
+      const conflito = gerentes.some((g, i) => g.login === login && i !== idx);
+      if (conflito) {
+        mostrarToast('Este nome de usuário já está em uso por outro gerente.', 'error');
+        return false;
+      }
+
+      gerentes[idx] = { nome, cpf, birthdate, gender, phone, cep, address, numero, email, login, senha };
+      localStorage.setItem('gerentes', JSON.stringify(gerentes));
+
+      // Mantém a sessão válida caso o login tenha sido alterado
+      sessaoGerencial.usuario = login;
+      localStorage.setItem('gerencia_sessao', JSON.stringify(sessaoGerencial));
+
+      mostrarToast('Seus dados foram atualizados com sucesso!', 'success');
+      fecharMeusDados();
+      return false;
+    }
+
     // ── Gerentes (cadastro exclusivo do admin) ──
+    // Registro: { nome, cpf, birthdate, gender, phone, cep, address,
+    //             numero, email, login, senha }
+    let gerenteEditIndex = null;
+
     function abrirGerentes() {
       renderizarGerentes();
-      document.getElementById('nomeGerente').value = '';
-      document.getElementById('loginGerente').value = '';
-      document.getElementById('senhaGerenteNovo').value = '';
+      novoFormGerente();
       document.getElementById('modalGerentes').classList.remove('hidden');
+      lucide.createIcons();
     }
 
     function fecharGerentes() {
       document.getElementById('modalGerentes').classList.add('hidden');
+      gerenteEditIndex = null;
+    }
+
+    function novoFormGerente() {
+      gerenteEditIndex = null;
+      document.getElementById('gerenteForm').reset();
+      document.querySelectorAll('#modalGerentes .show-error').forEach(el => el.classList.remove('show-error'));
+      document.getElementById('tituloFormGerente').innerText = 'Cadastrar novo gerente';
+      document.getElementById('btnSubmitGerente').innerText = 'Cadastrar Gerente';
+      document.getElementById('btnCancelarEdicaoGerente').classList.add('hidden');
+      document.getElementById('gCepStatus').innerText = 'Busca automática';
+      document.getElementById('gCepStatus').className = 'text-[10px] font-700 text-slate-400 italic';
     }
 
     function obterGerentes() {
@@ -752,61 +1159,188 @@
         lista.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 italic text-center py-2">Nenhum gerente cadastrado.</p>';
       } else {
         lista.innerHTML = gerentes.map((g, i) => `
-          <div class="flex items-center justify-between bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2.5">
-            <div>
-              <p class="text-sm font-700 text-slate-800 dark:text-white">${g.nome || g.login}</p>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Usuário: ${g.login}</p>
+          <div class="flex items-center justify-between gap-3 bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2.5">
+            <div class="min-w-0">
+              <p class="text-sm font-700 text-slate-800 dark:text-white truncate">${g.nome || g.login}</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                Usuário: ${g.login}${g.cpf ? ' — CPF: ' + g.cpf : ''}${g.email ? ' — ' + g.email : ''}
+              </p>
             </div>
-            <button onclick="removerGerente(${i})" class="text-red-500 hover:text-red-600 transition-colors">
-              <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
-            </button>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button onclick="editarGerente(${i})" title="Editar" class="text-amber-500 hover:text-amber-600 transition-colors">
+                <i data-lucide="pencil" style="width:16px;height:16px;"></i>
+              </button>
+              <button onclick="removerGerente(${i})" title="Excluir" class="text-red-500 hover:text-red-600 transition-colors">
+                <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+              </button>
+            </div>
           </div>
         `).join('');
       }
       lucide.createIcons();
     }
 
-    function cadastrarGerente() {
-      const nome = document.getElementById('nomeGerente').value.trim();
-      const login = document.getElementById('loginGerente').value.trim();
-      const senha = document.getElementById('senhaGerenteNovo').value;
+    function editarGerente(index) {
+      const gerentes = obterGerentes();
+      const g = gerentes[index];
+      if (!g) return;
 
-      if (!login || !senha) {
-        mostrarToast('Preencha o usuário e a senha do gerente.', 'error');
-        return;
+      gerenteEditIndex = index;
+      document.querySelectorAll('#modalGerentes .show-error').forEach(el => el.classList.remove('show-error'));
+
+      document.getElementById('gName').value = g.nome || '';
+      document.getElementById('gCpf').value = g.cpf || '';
+      document.getElementById('gBirthdate').value = g.birthdate || '';
+      document.getElementById('gGender').value = g.gender || '';
+      document.getElementById('gPhone').value = g.phone || '';
+      document.getElementById('gEmail').value = g.email || '';
+      document.getElementById('gCep').value = g.cep || '';
+      document.getElementById('gAddress').value = g.address || '';
+      document.getElementById('gNumero').value = g.numero || '';
+      document.getElementById('gLogin').value = g.login || '';
+      document.getElementById('gPassword').value = g.senha || '';
+      document.getElementById('gConfirmPassword').value = g.senha || '';
+
+      document.getElementById('tituloFormGerente').innerText = 'Editar gerente';
+      document.getElementById('btnSubmitGerente').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelarEdicaoGerente').classList.remove('hidden');
+      document.getElementById('gerenteForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      lucide.createIcons();
+    }
+
+    // CEP do formulário de gerente (mesma busca automática do cadastro de agente)
+    function maskCepGerente(input) {
+      let v = input.value.replace(/\D/g, '').slice(0, 8);
+      if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+      input.value = v;
+      if (v.replace('-', '').length === 8) buscarCepGerente(v.replace('-', ''));
+    }
+
+    function buscarCepGerente(cepLimpo) {
+      const status = document.getElementById('gCepStatus');
+      status.innerText = 'Buscando...';
+      status.className = 'text-[10px] font-700 text-amber-400 animate-pulse';
+      fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.erro) {
+            status.innerText = 'CEP não encontrado';
+            status.className = 'text-[10px] font-700 text-red-400';
+            return;
+          }
+          const partes = [data.logradouro, data.bairro, data.localidade, data.uf].filter(Boolean);
+          document.getElementById('gAddress').value = partes.join(', ');
+          status.innerText = 'Encontrado!';
+          status.className = 'text-[10px] font-700 text-emerald-400';
+          document.getElementById('gNumero').focus();
+        })
+        .catch(() => {
+          status.innerText = 'Erro na busca';
+          status.className = 'text-[10px] font-700 text-red-400';
+        });
+    }
+
+    function validarFormGerente(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('gName').value.trim();
+      const cpf = document.getElementById('gCpf').value.trim();
+      const birthdate = document.getElementById('gBirthdate').value.trim();
+      const gender = document.getElementById('gGender').value;
+      const phone = document.getElementById('gPhone').value;
+      const email = document.getElementById('gEmail').value.trim();
+      const cep = document.getElementById('gCep').value;
+      const address = document.getElementById('gAddress').value.trim();
+      const numero = document.getElementById('gNumero').value.trim();
+      const login = document.getElementById('gLogin').value.trim();
+      const senha = document.getElementById('gPassword').value;
+      const confirmarSenha = document.getElementById('gConfirmPassword').value;
+
+      let isValid = true;
+
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      if (cpfLimpo.length !== 11) {
+        document.getElementById('gCpf').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('gCpf').classList.remove('show-error');
       }
+
+      if (senha !== confirmarSenha) {
+        document.getElementById('gConfirmPassword').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('gConfirmPassword').classList.remove('show-error');
+      }
+
+      const phoneRegex = /^\(\d{2}\)\s\d{5}-\d{4}$/;
+      if (!phoneRegex.test(phone)) {
+        document.getElementById('gPhone').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('gPhone').classList.remove('show-error');
+      }
+
+      if (!birthdate) {
+        mostrarToast('Informe a data de nascimento.', 'error');
+        return false;
+      }
+
+      if (senha.length < 6) {
+        mostrarToast('A senha deve ter no mínimo 6 caracteres.', 'error');
+        return false;
+      }
+
+      if (!isValid) return false;
 
       if (login === 'admin') {
         mostrarToast('Este nome de usuário é reservado para o admin.', 'error');
-        return;
+        return false;
       }
 
-      if (senha.length < 4) {
-        mostrarToast('A senha deve ter no mínimo 4 caracteres.', 'error');
-        return;
+      const agentes = JSON.parse(localStorage.getItem('agentes')) || [];
+      if (agentes.some(a => a.login === login)) {
+        mostrarToast('Este nome de usuário já está em uso por um agente.', 'error');
+        return false;
       }
 
       const gerentes = obterGerentes();
-      if (gerentes.some(g => g.login === login)) {
+      const conflito = gerentes.some((g, i) => g.login === login && i !== gerenteEditIndex);
+      if (conflito) {
         mostrarToast('Este nome de usuário já está em uso por outro gerente.', 'error');
-        return;
+        return false;
       }
 
-      gerentes.push({ nome, login, senha });
-      localStorage.setItem('gerentes', JSON.stringify(gerentes));
-      mostrarToast('Gerente cadastrado com sucesso!', 'success');
+      const registro = {
+        nome, cpf, birthdate, gender, phone, cep, address, numero,
+        email, login, senha
+      };
 
-      document.getElementById('nomeGerente').value = '';
-      document.getElementById('loginGerente').value = '';
-      document.getElementById('senhaGerenteNovo').value = '';
+      if (gerenteEditIndex !== null) {
+        gerentes[gerenteEditIndex] = registro;
+        localStorage.setItem('gerentes', JSON.stringify(gerentes));
+        mostrarToast('Cadastro do gerente atualizado com sucesso!', 'success');
+      } else {
+        gerentes.push(registro);
+        localStorage.setItem('gerentes', JSON.stringify(gerentes));
+        mostrarToast('Gerente cadastrado com sucesso!', 'success');
+      }
+
+      novoFormGerente();
       renderizarGerentes();
+      return false;
     }
 
     function removerGerente(index) {
       const gerentes = obterGerentes();
+      const g = gerentes[index];
+      if (!g) return;
+      if (!confirm(`Excluir o cadastro do gerente "${g.nome || g.login}"?\n\nEsta ação não pode ser desfeita.`)) return;
+
       gerentes.splice(index, 1);
       localStorage.setItem('gerentes', JSON.stringify(gerentes));
       mostrarToast('Gerente removido.', 'success');
+      if (gerenteEditIndex === index) novoFormGerente();
       renderizarGerentes();
     }
 
@@ -1290,7 +1824,7 @@
           document.getElementById('btnSubmit').innerText = 'Salvar Alterações';
 
           document.getElementById('name').value = agente.name || '';
-          document.getElementById('motherName').value = agente.motherName || '';
+          document.getElementById('motherName').value = (agente.motherName || '').split(/\s+/)[0] || '';
           document.getElementById('cpf').value = agente.cpf || '';
           document.getElementById('birthdate').value = agente.birthdate || '';
           document.getElementById('gender').value = agente.gender || '';
@@ -1351,6 +1885,14 @@
           status.innerText = 'Erro na busca';
           status.className = 'text-[10px] font-700 text-red-400';
         });
+    }
+
+    // Mantém apenas o primeiro nome (sem espaços/sobrenomes)
+    function apenasPrimeiroNome(input) {
+      let v = input.value.replace(/[0-9]/g, '');
+      v = v.replace(/^\s+/, '');
+      const partes = v.split(/\s+/);
+      input.value = partes[0] || '';
     }
 
     function maskCpf(input) {
@@ -1423,6 +1965,13 @@
         isValid = false;
       } else {
         document.getElementById('phone').classList.remove('show-error');
+      }
+
+      if (!motherName || motherName.split(/\s+/).length > 1) {
+        document.getElementById('motherName').classList.add('show-error');
+        isValid = false;
+      } else {
+        document.getElementById('motherName').classList.remove('show-error');
       }
 
       if (!birthdate) {
